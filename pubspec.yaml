@@ -1,7 +1,7 @@
 name: pag_ems_tp
 description: "Energy@Grid EMS Tenant Portal"
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.1
 
 environment:
   sdk: ^3.7.0-243.0.dev
