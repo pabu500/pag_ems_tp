@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"name": "pkg_pabuff_helper",
+			"path": "../../pkg_pabuff_helper"
+		}
+	],
+	"settings": {}
+}

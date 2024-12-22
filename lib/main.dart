@@ -1,0 +1,193 @@
+import 'package:buff_helper/pag_helper/comm/comm_app.dart';
+import 'package:buff_helper/pag_helper/def/def_page_route.dart';
+import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
+import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
+import 'package:buff_helper/pag_helper/pag_project_repo.dart';
+import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
+import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
+import 'package:buff_helper/up_helper/model/model_theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:pag_ems_tp/app_config.dart';
+import 'package:pag_ems_tp/console_home.dart';
+import 'package:pag_ems_tp/pg_project_public_front.dart';
+import 'package:pag_ems_tp/user_service/pg_login.dart';
+import 'package:provider/provider.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+
+  String appName = packageInfo.appName;
+  // String packageName = packageInfo.packageName;
+  String version = packageInfo.version;
+  // String buildNumber = packageInfo.buildNumber;
+
+  String latestVersion = await getVersion2(appName, pagAppConfig);
+  String oreVersion = await getOreVersion2(null, pagAppConfig);
+
+  Map<String, dynamic>? portalScopeProfile = getPortalProjectScopeProfile(
+    activePortalPagProjectScopeList[0],
+  );
+  if (portalScopeProfile == null) {
+    if (kDebugMode) {
+      print('Project profile not found');
+    }
+    throw Exception('Project profile not found');
+  }
+
+  Map<String, dynamic> firebaseOptions =
+      portalScopeProfile['firebase_options'] ?? {};
+  if (firebaseOptions.isEmpty) {
+    throw Exception('Firebase options not found');
+  } else {
+    try {
+      final FirebaseOptions options = FirebaseOptions(
+        apiKey: firebaseOptions['apiKey'],
+        authDomain: firebaseOptions['authDomain'],
+        projectId: firebaseOptions['projectId'],
+        storageBucket: firebaseOptions['storageBucket'],
+        messagingSenderId: firebaseOptions['messagingSenderId'],
+        appId: firebaseOptions['appId'],
+      );
+      await Firebase.initializeApp(options: options);
+    } catch (e) {
+      if (kDebugMode) {
+        print('Firebase.initializeApp error: $e');
+      }
+    }
+  }
+
+  await iniSharedPref();
+
+  runApp(
+    // const MainApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => PagAppProvider()),
+        ChangeNotifierProvider(
+          create: (context) => ThemeProvider(isDark: true),
+        ),
+        ChangeNotifierProvider(
+          create:
+              (context) => PagUserProvider(
+                firebaseUser: FirebaseAuth.instance.currentUser,
+              ),
+        ),
+      ],
+      child: MainApp(
+        appName,
+        version,
+        latestVersion,
+        oreVersion,
+        thmPagNeoLight,
+        thmPagNeo,
+      ),
+    ),
+  );
+}
+
+class MainApp extends StatelessWidget {
+  const MainApp(
+    this.appName,
+    this.version,
+    this.latestVer,
+    this.oreVersion,
+    this.themeData,
+    this.themeDataDark, {
+    super.key,
+  });
+
+  final String appName;
+  final String version;
+  final String latestVer;
+  final String oreVersion;
+  final ThemeData themeData;
+  final ThemeData themeDataDark;
+
+  final appTitle = 'Energy@Grid EMS Tenant Portal';
+
+  @override
+  Widget build(BuildContext context) {
+    // return const MaterialApp(
+    //   home: Scaffold(body: Center(child: Text('Hello World!'))),
+    // );
+    PagAppProvider appModel = Provider.of<PagAppProvider>(
+      context,
+      listen: false,
+    );
+    appModel.appName = appName;
+    appModel.appVer = version;
+    appModel.latestVer = latestVer;
+    appModel.oreVer = oreVersion;
+
+    return Consumer<ThemeProvider>(
+      builder: (context, ThemeProvider themeNotifier, child) {
+        return MaterialApp.router(
+          routerConfig: _router,
+          title: appTitle,
+          theme: themeData,
+          darkTheme: themeDataDark,
+          themeMode: themeNotifier.isDark ? ThemeMode.dark : ThemeMode.light,
+          debugShowCheckedModeBanner: false,
+        );
+      },
+    );
+  }
+}
+
+final GoRouter _router = GoRouter(
+  // the above is embedded case for route '/'
+  // if so '/' is called every time for any route
+  // before the actual route is called
+  routes: <GoRoute>[
+    GoRoute(
+      path: '/',
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.consoleHomeDashboard;
+
+        return const ConsoleHome(pageRoute: PagPageRoute.consoleHomeDashboard);
+      },
+    ),
+    GoRoute(
+      path: getRoute(PagPageRoute.projectPublicFront),
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.projectPublicFront;
+        return const PgProjectPublicFront();
+      },
+    ),
+    GoRoute(
+      path: getRoute(PagPageRoute.login),
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.login;
+        return const PgLogin();
+      },
+    ),
+    GoRoute(
+      path: getRoute(PagPageRoute.consoleHomeDashboard),
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.consoleHomeDashboard;
+        return const ConsoleHome(pageRoute: PagPageRoute.consoleHomeDashboard);
+      },
+    ),
+    GoRoute(
+      path: getRoute(PagPageRoute.billingManager),
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.billingManager;
+        return const ConsoleHome(pageRoute: PagPageRoute.billingManager);
+      },
+    ),
+  ],
+  //   ),
+  // ],
+);
