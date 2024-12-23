@@ -44,10 +44,9 @@ class _PgProjectPublicFrontState extends State<PgProjectPublicFront> {
                 color: Theme.of(context).colorScheme.surface,
                 image: DecorationImage(
                   // opacity: 0.67,
-                  image:
-                      Theme.of(context).brightness == Brightness.dark
-                          ? const AssetImage("assets/images/grid3bc.png")
-                          : const AssetImage("assets/images/grid3wc.png"),
+                  image: Theme.of(context).brightness == Brightness.dark
+                      ? const AssetImage("assets/images/grid3bc.png")
+                      : const AssetImage("assets/images/grid3wc.png"),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -81,54 +80,52 @@ class _PgProjectPublicFrontState extends State<PgProjectPublicFront> {
                       verticalSpaceSmall,
                       SizedBox(
                         height: 160,
-                        child:
-                            widget.isSplash
-                                ? const Center(child: WgtPagWait(size: 55))
-                                : Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'Welcome to',
-                                      style: TextStyle(
-                                        // wordSpacing: -0.5,
-                                        // letterSpacing: -0.8,
-                                        fontSize: 21,
-                                        color: Theme.of(context).hintColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
+                        child: widget.isSplash
+                            ? const Center(child: WgtPagWait(size: 55))
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    'Welcome to Energy@Grid',
+                                    style: TextStyle(
+                                      // wordSpacing: -0.5,
+                                      // letterSpacing: -0.8,
+                                      fontSize: 21,
+                                      color: Theme.of(context).hintColor,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    verticalSpaceSmall,
-                                    Text(
-                                      'Energy@Grid Tenant Portal',
-                                      style: TextStyle(
-                                        // wordSpacing: -0.5,
-                                        // letterSpacing: -0.8,
-                                        fontSize: 21,
-                                        color: Theme.of(context).hintColor,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                      textAlign: TextAlign.center,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  verticalSpaceSmall,
+                                  Text(
+                                    'Tenant Portal',
+                                    style: TextStyle(
+                                      // wordSpacing: -0.5,
+                                      // letterSpacing: -0.8,
+                                      fontSize: 21,
+                                      color: Theme.of(context).hintColor,
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    verticalSpaceRegular,
-                                    xtButton(
-                                      onPressed: () => context.go('/login'),
-                                      text: 'Login',
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  verticalSpaceRegular,
+                                  xtButton(
+                                    onPressed: () => context.go('/login'),
+                                    text: 'Login',
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.primary.withAlpha(200),
+                                    textStyle: TextStyle(
                                       color: Theme.of(
                                         context,
-                                      ).colorScheme.primary.withAlpha(200),
-                                      textStyle: TextStyle(
-                                        color:
-                                            Theme.of(
-                                              context,
-                                            ).colorScheme.onPrimary,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 21,
-                                      ),
-                                      shadowColor: Colors.transparent,
+                                      ).colorScheme.onPrimary,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 21,
                                     ),
-                                  ],
-                                ),
+                                    shadowColor: Colors.transparent,
+                                  ),
+                                ],
+                              ),
                       ),
                       verticalSpaceRegular,
                       verticalSpaceRegular,
