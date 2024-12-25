@@ -26,6 +26,7 @@ class _WgtEmsDashboardState extends State<WgtEmsDashboard> {
               tenantIdStr: '123',
               tenenatName: 'tenant-1',
               tenantLabel: 'Tenant 1',
+              tenantAccountNumber: 'A1234567890',
             ),
           ),
         ],

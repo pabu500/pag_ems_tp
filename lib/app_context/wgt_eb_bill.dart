@@ -15,11 +15,13 @@ class WgtEbBillTenant extends StatefulWidget {
     required this.tenantIdStr,
     required this.tenenatName,
     required this.tenantLabel,
+    required this.tenantAccountNumber,
   });
 
   final String tenantIdStr;
   final String tenenatName;
   final String tenantLabel;
+  final String tenantAccountNumber;
 
   @override
   State<WgtEbBillTenant> createState() => _WgtEbBillTenantState();
