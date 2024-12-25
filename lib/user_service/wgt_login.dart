@@ -1,4 +1,5 @@
 import 'package:buff_helper/pag_helper/app_context_list.dart';
+import 'package:buff_helper/pag_helper/def/def_user.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
 import 'package:buff_helper/pag_helper/wgt/wgt_comm_button.dart';
 import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
@@ -9,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pag_ems_tp/app_config.dart';
+import 'package:pag_ems_tp/user_service/post_login.dart';
 
 import 'comm_user_service.dart';
 
@@ -47,9 +49,10 @@ class _WgtLoginState extends State<WgtLogin> {
     try {
       MdlPagUser user = await doLoginPag(
         Map.of({
-          PagUserKey.username: _username,
-          PagUserKey.password: _password,
-          PagUserKey.email: '',
+          PagUserKey.username.name: _username,
+          PagUserKey.password.name: _password,
+          PagUserKey.email.name: '',
+          'portal_type': PagPortalType.emsTp.label,
         }),
       );
 
@@ -89,8 +92,8 @@ class _WgtLoginState extends State<WgtLogin> {
           _errorTextLocal = 'failed to get user scope';
         });
       } else if (message.toLowerCase().contains(
-        'no access to this project portal',
-      )) {
+            'no access to this project portal',
+          )) {
         setState(() {
           _errorTextLocal = 'no access to this project portal';
         });
@@ -140,6 +143,8 @@ class _WgtLoginState extends State<WgtLogin> {
     }
     try {
       if (!user.isEmpty && (user.enabled ?? false)) {
+        await doPostLogin(context, user, loadVendorCredential: false);
+
         await widget.onPostLogin(user).then((value) async {
           if (mounted) {
             routeGuard(context, user, goHome: true);
@@ -162,8 +167,7 @@ class _WgtLoginState extends State<WgtLogin> {
     if (kDebugMode) {
       print('WgtLogin.build()');
     }
-    bool enabled =
-        !_isLoggingIn &&
+    bool enabled = !_isLoggingIn &&
         _username.isNotEmpty &&
         _password.isNotEmpty &&
         _errorTextLocal.isEmpty;

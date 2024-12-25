@@ -9,16 +9,23 @@ import 'dart:html' as html;
 
 import 'package:path_provider/path_provider.dart';
 
-class WgtEbBill extends StatefulWidget {
-  const WgtEbBill({
+class WgtEbBillTenant extends StatefulWidget {
+  const WgtEbBillTenant({
     super.key,
+    required this.tenantIdStr,
+    required this.tenenatName,
+    required this.tenantLabel,
   });
 
+  final String tenantIdStr;
+  final String tenenatName;
+  final String tenantLabel;
+
   @override
-  State<WgtEbBill> createState() => _WgtEbBillState();
+  State<WgtEbBillTenant> createState() => _WgtEbBillTenantState();
 }
 
-class _WgtEbBillState extends State<WgtEbBill> {
+class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
   List<String> _ebTenantList = [];
   List<String> _filteredEbTenantList = [];
   String baseUrl = 'https://dev-eb-helper.evs.com.sg/api';

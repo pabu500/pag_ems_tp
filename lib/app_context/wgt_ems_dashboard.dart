@@ -1,5 +1,6 @@
 import 'package:buff_helper/pkg_buff_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:pag_ems_tp/app_context/wgt_eb_bill.dart';
 
 class WgtEmsDashboard extends StatefulWidget {
   const WgtEmsDashboard({
@@ -21,15 +22,10 @@ class _WgtEmsDashboardState extends State<WgtEmsDashboard> {
             //full width,
             width: double.infinity,
             height: 800,
-            child: Center(
-              child: Text(
-                'EMS - Dashboard',
-                style: TextStyle(
-                  fontSize: 21,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).hintColor,
-                ),
-              ),
+            child: WgtEbBillTenant(
+              tenantIdStr: '123',
+              tenenatName: 'tenant-1',
+              tenantLabel: 'Tenant 1',
             ),
           ),
         ],

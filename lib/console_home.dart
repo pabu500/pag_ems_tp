@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:buff_helper/pag_helper/app_context_list.dart';
 import 'package:buff_helper/pag_helper/def/def_page_route.dart';
 import 'package:buff_helper/pag_helper/def/def_tree.dart';
+import 'package:buff_helper/pag_helper/def/def_user.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
@@ -134,9 +135,10 @@ class _ConsoleHomeState extends State<ConsoleHome>
       try {
         MdlPagUser user = await doLoginPag(
           Map.of({
-            PagUserKey.username: username,
-            PagUserKey.password: password,
-            PagUserKey.email: '',
+            PagUserKey.username.name: username,
+            PagUserKey.password.name: password,
+            PagUserKey.email.name: '',
+            'portal_type': PagPortalType.emsTp.label,
           }),
         );
 
@@ -244,43 +246,43 @@ class _ConsoleHomeState extends State<ConsoleHome>
 
     return !loggedIn
         ? FutureBuilder<void>(
-          future: loadAppSetting(),
-          builder: (context, AsyncSnapshot<void> snapshot) {
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                if (kDebugMode) {
-                  print('waiting...');
-                }
-                return const PgSplash();
-              default:
-                if (snapshot.hasError) {
+            future: loadAppSetting(),
+            builder: (context, AsyncSnapshot<void> snapshot) {
+              switch (snapshot.connectionState) {
+                case ConnectionState.waiting:
                   if (kDebugMode) {
-                    print(snapshot.error);
+                    print('waiting...');
                   }
-                  return homeBoard(
-                    'Error',
-                    getErrorTextPrompt(
-                      context: context,
-                      errorText: 'Serivce Error',
-                    ),
-                  );
-                } else {
-                  if (_loggedInUser == null || _loggedInUser!.isEmpty) {
+                  return const PgSplash();
+                default:
+                  if (snapshot.hasError) {
                     if (kDebugMode) {
-                      print('No user');
+                      print(snapshot.error);
                     }
-                    return const PgProjectPublicFront();
+                    return homeBoard(
+                      'Error',
+                      getErrorTextPrompt(
+                        context: context,
+                        errorText: 'Serivce Error',
+                      ),
+                    );
                   } else {
-                    if (kDebugMode) {
-                      print('User: ${_loggedInUser!.username}');
-                    }
+                    if (_loggedInUser == null || _loggedInUser!.isEmpty) {
+                      if (kDebugMode) {
+                        print('No user');
+                      }
+                      return const PgProjectPublicFront();
+                    } else {
+                      if (kDebugMode) {
+                        print('User: ${_loggedInUser!.username}');
+                      }
 
-                    return completedWidget();
+                      return completedWidget();
+                    }
                   }
-                }
-            }
-          },
-        )
+              }
+            },
+          )
         : completedWidget();
   }
 
@@ -300,21 +302,19 @@ class _ConsoleHomeState extends State<ConsoleHome>
         leading: Builder(
           builder: (BuildContext context) {
             return InkWell(
-              onTap:
-                  _loadingPagAppContext
-                      ? null
-                      : () {
-                        Scaffold.of(context).openDrawer();
-                      },
+              onTap: _loadingPagAppContext
+                  ? null
+                  : () {
+                      Scaffold.of(context).openDrawer();
+                    },
               child: WgtPaG(
                 conextLabel: pageTitle, //_currentAppContext.label,
                 size: 35,
                 colorA: getColor(context: context, pagWgt: PagWgt.pagCube),
-                colorC:
-                    _currentAppContext.appContextType ==
-                            PagAppContextType.consoleHome
-                        ? null
-                        : pag3,
+                colorC: _currentAppContext.appContextType ==
+                        PagAppContextType.consoleHome
+                    ? null
+                    : pag3,
               ),
             );
           },
@@ -399,49 +399,48 @@ class _ConsoleHomeState extends State<ConsoleHome>
   }
 
   Widget getFhDataUpdate() {
-    bool show =
-        _currentAppContext == appCtxConsoleHome ||
+    bool show = _currentAppContext == appCtxConsoleHome ||
         widget.pageRoute == PagPageRoute.esInsights;
     if (_colorAnimationController != null &&
         _rotationAnimationController != null) {
       return !show
           ? const SizedBox()
           : AnimatedBuilder(
-            animation: _colorAnimationController!,
-            builder: (context, child) {
-              return Positioned(
-                bottom: 0,
-                left: 0,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    horizontalSpaceSmall,
-                    RotationTransition(
-                      turns: _rotationAnimation,
-                      child: Icon(
-                        Symbols.sync,
-                        size: 15,
-                        color: _colorAnimation.value,
-                      ),
-                    ),
-                    horizontalSpaceTiny,
-                    _fetchedTimeStr == '-'
-                        ? xtWait(
-                          anim: 'horizontalRotatingDots',
+              animation: _colorAnimationController!,
+              builder: (context, child) {
+                return Positioned(
+                  bottom: 0,
+                  left: 0,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      horizontalSpaceSmall,
+                      RotationTransition(
+                        turns: _rotationAnimation,
+                        child: Icon(
+                          Symbols.sync,
+                          size: 15,
                           color: _colorAnimation.value,
-                        )
-                        : Text(
-                          _fetchedTimeStr,
-                          style: TextStyle(
-                            fontSize: 13.6,
-                            color: _colorAnimation.value,
-                          ),
                         ),
-                  ],
-                ),
-              );
-            },
-          );
+                      ),
+                      horizontalSpaceTiny,
+                      _fetchedTimeStr == '-'
+                          ? xtWait(
+                              anim: 'horizontalRotatingDots',
+                              color: _colorAnimation.value,
+                            )
+                          : Text(
+                              _fetchedTimeStr,
+                              style: TextStyle(
+                                fontSize: 13.6,
+                                color: _colorAnimation.value,
+                              ),
+                            ),
+                    ],
+                  ),
+                );
+              },
+            );
     }
     return const SizedBox();
   }
@@ -530,10 +529,9 @@ class _ConsoleHomeState extends State<ConsoleHome>
   Widget getAppContextButtonRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children:
-          appContextList
-              .map((appContext) => getAppConextButton(appContext))
-              .toList(),
+      children: appContextList
+          .map((appContext) => getAppConextButton(appContext))
+          .toList(),
     );
   }
 
@@ -616,19 +614,19 @@ class _ConsoleHomeState extends State<ConsoleHome>
           horizontalSpaceSmall,
           _loadingMessage.contains('OAX HyperJump')
               ? Text(
-                _loadingMessage,
-                style: TextStyle(
-                  color: pagNeo,
-                  fontSize: 16,
-                  shadows: [
-                    Shadow(
-                      color: pagNeo.withAlpha(80),
-                      offset: const Offset(1, 1),
-                      blurRadius: 2,
-                    ),
-                  ],
-                ),
-              )
+                  _loadingMessage,
+                  style: TextStyle(
+                    color: pagNeo,
+                    fontSize: 16,
+                    shadows: [
+                      Shadow(
+                        color: pagNeo.withAlpha(80),
+                        offset: const Offset(1, 1),
+                        blurRadius: 2,
+                      ),
+                    ],
+                  ),
+                )
               : Text(_loadingMessage),
         ],
       );
@@ -660,46 +658,41 @@ class _ConsoleHomeState extends State<ConsoleHome>
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: InkWell(
-        onTap:
-            disabled
-                ? null
-                : () async {
-                  if (kDebugMode) {
-                    print('AppContext: ${appContext.name}');
-                  }
+        onTap: disabled
+            ? null
+            : () async {
+                if (kDebugMode) {
+                  print('AppContext: ${appContext.name}');
+                }
 
-                  PagPageRoute? appHomeRoute = appContext.appHomePageRoute;
-                  String routeStr = appHomeRoute?.route ?? appContext.route;
+                PagPageRoute? appHomeRoute = appContext.appHomePageRoute;
+                String routeStr = appHomeRoute?.route ?? appContext.route;
 
-                  if (mounted) {
-                    context.go('/$routeStr');
-                  }
-                },
+                if (mounted) {
+                  context.go('/$routeStr');
+                }
+              },
         child: Container(
           width: 65,
           decoration: BoxDecoration(
-            color:
-                _loadingPagAppContext
-                    ? Theme.of(context).hintColor.withAlpha(50)
-                    : appContext.appContextType ==
-                        _currentAppContext.appContextType
+            color: _loadingPagAppContext
+                ? Theme.of(context).hintColor.withAlpha(50)
+                : appContext.appContextType == _currentAppContext.appContextType
                     ? pag3.withAlpha(200)
                     : disabled
-                    ? Theme.of(context).disabledColor.withAlpha(200)
-                    : Theme.of(context).colorScheme.primary.withAlpha(130),
+                        ? Theme.of(context).disabledColor.withAlpha(200)
+                        : Theme.of(context).colorScheme.primary.withAlpha(130),
             borderRadius: BorderRadius.circular(5),
-            border:
-                !appContext.is3rdParty
-                    ? null
-                    : Border.all(
-                      color:
-                          disabled
-                              ? Theme.of(context).disabledColor.withAlpha(200)
-                              : Theme.of(
-                                context,
-                              ).colorScheme.onSurface.withAlpha(130),
-                      width: 1.5,
-                    ),
+            border: !appContext.is3rdParty
+                ? null
+                : Border.all(
+                    color: disabled
+                        ? Theme.of(context).disabledColor.withAlpha(200)
+                        : Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withAlpha(130),
+                    width: 1.5,
+                  ),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 3),
           child: Row(
@@ -708,10 +701,9 @@ class _ConsoleHomeState extends State<ConsoleHome>
               Text(
                 appContext.shortLabel,
                 style: TextStyle(
-                  color:
-                      disabled
-                          ? Theme.of(context).hintColor.withAlpha(200)
-                          : Theme.of(context).colorScheme.onSurface,
+                  color: disabled
+                      ? Theme.of(context).hintColor.withAlpha(200)
+                      : Theme.of(context).colorScheme.onSurface,
                   fontSize: 16,
                 ),
               ),

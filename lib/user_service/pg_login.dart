@@ -42,18 +42,9 @@ class _PgLoginState extends State<PgLogin> {
         print('Checking all systems');
       }
 
-      await _checkOresvc();
-      await _checkFleetHealth();
-      await _checkPQ();
-      await _checkOaxsvc();
-
       await Future.delayed(const Duration(microseconds: 500));
       setState(() {
-        _allSystemGo =
-            _oreStatus == 'Go' &&
-            _oaxsvcStatus == 'Go' &&
-            _ctLabStatus == 'Go' &&
-            _fleetHealthStatus == 'Go';
+        _allSystemGo = true;
       });
       await Future.delayed(const Duration(microseconds: 1000));
       if (kDebugMode) {
@@ -70,94 +61,6 @@ class _PgLoginState extends State<PgLogin> {
       if (kDebugMode) {
         print('login: finally');
       }
-    }
-  }
-
-  Future<dynamic> _checkOresvc() async {
-    var result = {};
-    try {
-      setState(() {
-        _isCheckingOresvc = true;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      result['status'] = 'Go';
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    } finally {
-      setState(() {
-        _isCheckingOresvc = false;
-        _oreStatus = result['status'];
-      });
-    }
-  }
-
-  Future<dynamic> _checkFleetHealth() async {
-    var result = {};
-    try {
-      setState(() {
-        _isCheckingFleetHealth = true;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      result['status'] = 'Go';
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    } finally {
-      setState(() {
-        _isCheckingFleetHealth = false;
-        _fleetHealthStatus = result['status'];
-      });
-    }
-  }
-
-  Future<dynamic> _checkPQ() async {
-    var result = {};
-    try {
-      setState(() {
-        _isCheckingPQ = true;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      result['status'] = 'Go';
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    } finally {
-      setState(() {
-        _isCheckingPQ = false;
-        _pqStatus = result['status'];
-      });
-    }
-  }
-
-  Future<dynamic> _checkOaxsvc() async {
-    var result = {};
-    try {
-      setState(() {
-        _isCheckingOaxsvc = true;
-      });
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      result['status'] = 'Go';
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    } finally {
-      setState(() {
-        _isCheckingOaxsvc = false;
-        _oaxsvcStatus = result['status'];
-      });
     }
   }
 
@@ -187,22 +90,22 @@ class _PgLoginState extends State<PgLogin> {
               verticalSpaceSmall,
               _allSystemGo
                   ? Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 13,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(3),
-                      border: Border.all(color: Colors.green.shade600),
-                    ),
-                    child: Text(
-                      'All Systems Go',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface,
-                        // fontStyle: FontStyle.italic,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 13,
+                        vertical: 5,
                       ),
-                    ),
-                  )
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border.all(color: Colors.green.shade600),
+                      ),
+                      child: Text(
+                        'All Systems Go',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          // fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    )
                   : getGoStatusRow(),
             ],
           ),
@@ -245,27 +148,27 @@ class _PgLoginState extends State<PgLogin> {
         isChecking
             ? const WgtPagWait(size: 21)
             : status.isEmpty
-            ? Container()
-            : Container(
-              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(3),
-                border: Border.all(
-                  color:
-                      status == 'Go'
-                          ? Colors.green.shade600
-                          : Theme.of(context).colorScheme.error,
-                ),
-              ),
-              child: Text(
-                status,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontSize: 15,
-                  // fontStyle: FontStyle.italic,
-                ),
-              ),
-            ),
+                ? Container()
+                : Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(3),
+                      border: Border.all(
+                        color: status == 'Go'
+                            ? Colors.green.shade600
+                            : Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                    child: Text(
+                      status,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontSize: 15,
+                        // fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
       ],
     );
   }

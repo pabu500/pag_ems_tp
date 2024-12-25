@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:pag_ems_tp/app_config.dart';
 
-Future<MdlPagUser> doLoginPag(Map<Enum, String> formData) async {
+Future<MdlPagUser> doLoginPag(Map<String, String> formData) async {
   String url = PagUrlController(
     null,
     pagAppConfig,
@@ -18,11 +18,12 @@ Future<MdlPagUser> doLoginPag(Map<Enum, String> formData) async {
       'Content-Type': 'application/json; charset=UTF-8',
     },
     body: jsonEncode(<String, String>{
-      PagUserKey.username.name: formData[PagUserKey.username] ?? '',
-      PagUserKey.password.name: formData[PagUserKey.password] ?? '',
+      PagUserKey.username.name: formData[PagUserKey.username.name] ?? '',
+      PagUserKey.password.name: formData[PagUserKey.password.name] ?? '',
       // PagUserKey.email.name: formData[PagUserKey.email]!,
       // PagUserKey.authProvider.name: formData[PagUserKey.authProvider] ?? '',
       // PagUserKey.destPortal.name: 'pag_console',
+      'portal_type': formData['portal_type'] ?? '',
     }),
   );
 
