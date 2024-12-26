@@ -28,6 +28,7 @@ class WgtEbBillTenant extends StatefulWidget {
 }
 
 class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
+  bool _isAdmin = false;
   List<String> _ebTenantList = [];
   List<String> _filteredEbTenantList = [];
   String baseUrl = 'https://dev-eb-helper.evs.com.sg/api';
@@ -37,7 +38,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
   String tenantListEndpoint = '/get_tenant_list';
   String uploadFileEndpoint = '/upload_file';
   String deleteFileEndpoint = '/delete_file';
-  String userId = 'admin';
+  // String userId = 'admin';
   String? _selectedTenant;
   final TextEditingController _tenantController = TextEditingController();
   List<Map<String, dynamic>> pdfList = [];
@@ -50,7 +51,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
     }
 
     final Map<String, dynamic> body = {
-      'user_id': userId,
+      'user_id': 'admin',
     };
 
     var response;
@@ -492,7 +493,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                 if (!_ebTenantList.contains(tenantId)) {
                   return;
                 }
-                await deletePdf(files, userId);
+                await deletePdf(files, widget.tenenatName);
 
                 _getTenantListFuture = getTenantListFuture();
                 await updatePdfList(tenantId);
@@ -519,6 +520,8 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
     // TODO: implement initState
     super.initState();
     _selectedTenant = null;
+    _isAdmin = (widget.tenenatName == 'admin');
+    _tenantController.text = widget.tenantAccountNumber;
     _filteredEbTenantList = _ebTenantList;
     _getTenantListFuture = getTenantListFuture();
     _tenantController.addListener(_filterTenantList);
@@ -597,7 +600,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
         children: [
           getSearchWidget(),
           // const SizedBox(width: 10),
-          getActionPdfWidget(),
+          _isAdmin ? getActionPdfWidget() : const SizedBox.shrink(),
         ],
       ),
     );
@@ -608,7 +611,8 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
         child: Row(
       children: [
         DropdownMenu(
-          enabled: true,
+          initialSelection: widget.tenantAccountNumber,
+          enabled: _isAdmin,
           width: 200,
           controller: _tenantController,
           dropdownMenuEntries: _filteredEbTenantList
@@ -741,7 +745,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                 child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      pdfList.isNotEmpty
+                      pdfList.isNotEmpty && _isAdmin
                           ? SizedBox(
                               width: MediaQuery.of(context).size.width - 40,
                               height: 30,
@@ -818,7 +822,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                             ),
                                             child: const Text('Delete PDFs'),
                                           ),
-                                        ),
+                                        )
                                 ],
                               ))
                           : const SizedBox.shrink(),
@@ -829,22 +833,25 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                             ? DataTable(
                                 dividerThickness: 0.2,
                                 columns: [
-                                  DataColumn(
-                                      label: Checkbox(
-                                          value: pdfList.every(
-                                              (element) => element['selected']),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              for (var element in pdfList) {
-                                                element['selected'] = value;
-                                              }
-                                            });
-                                          })),
+                                  if (_isAdmin)
+                                    DataColumn(
+                                        label: Checkbox(
+                                            value: pdfList.every((element) =>
+                                                element['selected']),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                for (var element in pdfList) {
+                                                  element['selected'] = value;
+                                                }
+                                              });
+                                            })),
                                   const DataColumn(
+                                      columnWidth: FlexColumnWidth(),
                                       label: Expanded(
-                                    child: Text('PDF'),
-                                  )),
-                                  const DataColumn(label: Text('Delete')),
+                                        child: Text('PDF'),
+                                      )),
+                                  if (_isAdmin)
+                                    const DataColumn(label: Text('Delete')),
                                   const DataColumn(label: Text('Download'))
                                 ],
                                 rows: List.generate(pdfList.length, (index) {
@@ -853,61 +860,68 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                           '';
                                   return DataRow(
                                     cells: [
-                                      DataCell(
-                                        SizedBox(
-                                          child: Checkbox(
-                                            value: pdfList[index]['selected'],
-                                            onChanged: (bool? value) {
-                                              setState(() {
-                                                pdfList[index]['selected'] =
-                                                    value ??
-                                                        false; // Update when checkbox is clicked
-                                              });
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      DataCell(SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width -
-                                                60 -
-                                                200 -
-                                                60 -
-                                                100 -
-                                                40 -
-                                                40 -
-                                                200,
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            Flexible(
-                                              fit: FlexFit.tight,
-                                              child: Text(
-                                                filename,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                      if (_isAdmin)
+                                        DataCell(
+                                          SizedBox(
+                                            child: Checkbox(
+                                              value: pdfList[index]['selected'],
+                                              onChanged: (bool? value) {
+                                                setState(() {
+                                                  pdfList[index]['selected'] =
+                                                      value ??
+                                                          false; // Update when checkbox is clicked
+                                                });
+                                              },
                                             ),
-                                          ],
-                                        ),
-                                      )),
-                                      DataCell(SizedBox(
-                                        width: 40,
-                                        child: IconButton(
-                                          color: Colors.red,
-                                          // hoverColor: Colors.transparent,
-                                          icon: const Icon(
-                                            Icons.delete,
                                           ),
-                                          onPressed: () =>
-                                              _showConfirmationDialog(context,
-                                                  [filename], _selectedTenant!),
-                                          tooltip: 'Delete',
-                                          focusColor: Colors.transparent,
+                                        ),
+                                      DataCell(Expanded(
+                                        // width:
+                                        //     MediaQuery.of(context).size.width -
+                                        //         60 -
+                                        //         200 -
+                                        //         60 -
+                                        //         100 -
+                                        //         40 -
+                                        //         40 -
+                                        //         200,
+                                        child: SizedBox(
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Flexible(
+                                                fit: FlexFit.tight,
+                                                child: Text(
+                                                  filename,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       )),
+                                      if (_isAdmin)
+                                        DataCell(SizedBox(
+                                          width: 40,
+                                          child: IconButton(
+                                            color: Colors.red,
+                                            // hoverColor: Colors.transparent,
+                                            icon: const Icon(
+                                              Icons.delete,
+                                            ),
+                                            onPressed: () =>
+                                                _showConfirmationDialog(
+                                                    context,
+                                                    [filename],
+                                                    _selectedTenant!),
+                                            tooltip: 'Delete',
+                                            focusColor: Colors.transparent,
+                                          ),
+                                        )),
                                       DataCell(SizedBox(
                                         width: 60,
                                         child: IconButton(
