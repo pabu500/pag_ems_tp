@@ -24,9 +24,9 @@ class _WgtEmsDashboardState extends State<WgtEmsDashboard> {
             height: 800,
             child: WgtEbBillTenant(
               tenantIdStr: '123',
-              tenenatName: 'tenant-1',
+              tenenatName: 'tenant-1', //'admin'
               tenantLabel: 'Tenant 1',
-              tenantAccountNumber: 'A1234567890',
+              tenantAccountNumber: 'A5310014',
             ),
           ),
         ],
