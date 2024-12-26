@@ -600,7 +600,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
         children: [
           getSearchWidget(),
           // const SizedBox(width: 10),
-          _isAdmin ? getActionPdfWidget() : const SizedBox.shrink(),
+          if (_isAdmin) getActionPdfWidget(),
         ],
       ),
     );
@@ -822,7 +822,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                             ),
                                             child: const Text('Delete PDFs'),
                                           ),
-                                        )
+                                        ),
                                 ],
                               ))
                           : const SizedBox.shrink(),
