@@ -57,7 +57,7 @@ class _PgLoginState extends State<PgLogin> {
                   Provider.of<PagAppProvider>(context, listen: false)
                       .iniPageRoute(PagPageRoute.consoleHomeDashboard);
 
-                  context.go(getRoute(PagPageRoute.splash));
+                  context.push(getRoute(PagPageRoute.splash));
                 },
               ),
             ],

@@ -40,7 +40,10 @@ Future<void> doPostLogin(
       ),
     );
     if (result['user_role_scope_list'] != null) {
-      loggedInUser.populateRoleScope(result['user_role_scope_list']);
+      loggedInUser.populateRoleScope(
+        result['user_role_scope_list'],
+        lazyLoadScope: 'site_group',
+      );
     }
   } catch (e) {
     if (kDebugMode) {
