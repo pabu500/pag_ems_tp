@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:buff_helper/pag_helper/app_context_list.dart';
+import 'package:buff_helper/pag_helper/comm/comm_user_service.dart';
 import 'package:buff_helper/pag_helper/def/def_page_route.dart';
-import 'package:buff_helper/pag_helper/def/def_tree.dart';
-import 'package:buff_helper/pag_helper/def/def_user.dart';
+import 'package:buff_helper/pag_helper/def/def_role.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
@@ -11,10 +11,8 @@ import 'package:buff_helper/pag_helper/model/scope/mdl_pag_scope2.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/vendor_helper.dart';
 import 'package:buff_helper/pag_helper/wgt/scope/wgt_scope_selector3.dart';
-import 'package:buff_helper/pag_helper/wgt/tree/wgt_tree_element.dart';
 import 'package:buff_helper/pag_helper/wgt/wgt_pag.dart';
 import 'package:buff_helper/pkg_buff_helper.dart';
-import 'package:buff_helper/xt_ui/wdgt/show_model_bottom_sheet.dart';
 import 'package:buff_helper/xt_ui/wdgt/wgt_pag_wait.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +23,6 @@ import 'package:pag_ems_tp/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:pag_ems_tp/pg_splash.dart';
 import 'package:pag_ems_tp/user_menu.dart';
-import 'package:pag_ems_tp/user_service/comm_user_service.dart';
 import 'package:provider/provider.dart';
 import '../app_config.dart';
 
@@ -134,6 +131,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
     } else {
       try {
         MdlPagUser user = await doLoginPag(
+          pagAppConfig,
           Map.of({
             PagUserKey.username.name: username,
             PagUserKey.password.name: password,

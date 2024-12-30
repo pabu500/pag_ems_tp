@@ -18,6 +18,8 @@ import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:pag_ems_tp/user_service/pg_login.dart';
 import 'package:provider/provider.dart';
 
+import 'pg_splash.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -74,10 +76,9 @@ void main() async {
           create: (context) => ThemeProvider(isDark: true),
         ),
         ChangeNotifierProvider(
-          create:
-              (context) => PagUserProvider(
-                firebaseUser: FirebaseAuth.instance.currentUser,
-              ),
+          create: (context) => PagUserProvider(
+            firebaseUser: FirebaseAuth.instance.currentUser,
+          ),
         ),
       ],
       child: MainApp(
@@ -155,6 +156,13 @@ final GoRouter _router = GoRouter(
         return const ConsoleHome(pageRoute: PagPageRoute.consoleHomeDashboard);
       },
     ),
+    GoRoute(
+        path: getRoute(PagPageRoute.splash),
+        builder: (context, state) {
+          Provider.of<PagAppProvider>(context, listen: false).prCur =
+              PagPageRoute.splash;
+          return const PgSplash();
+        }),
     GoRoute(
       path: getRoute(PagPageRoute.projectPublicFront),
       builder: (context, state) {
