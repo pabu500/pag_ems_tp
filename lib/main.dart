@@ -15,6 +15,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pag_ems_tp/app_config.dart';
 import 'package:pag_ems_tp/console_home.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
+import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:pag_ems_tp/user_service/pg_login.dart';
 import 'package:provider/provider.dart';
 
@@ -169,6 +170,14 @@ final GoRouter _router = GoRouter(
         Provider.of<PagAppProvider>(context, listen: false).prCur =
             PagPageRoute.projectPublicFront;
         return const PgProjectPublicFront();
+      },
+    ),
+    GoRoute(
+      path: getRoute(PagPageRoute.techIssue),
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.techIssue;
+        return const PgTechIssue();
       },
     ),
     GoRoute(

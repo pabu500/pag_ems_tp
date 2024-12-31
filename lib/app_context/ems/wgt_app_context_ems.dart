@@ -1,7 +1,7 @@
+import 'package:buff_helper/pag_helper/app_context_list.dart';
 import 'package:buff_helper/pag_helper/def/def_page_route.dart';
 import 'package:flutter/material.dart';
-import 'package:pag_ems_tp/app_context/wgt_billing_manager.dart';
-import 'wgt_ems_dashboard.dart';
+import 'package:pag_ems_tp/app_context/ems/billing_manager/wgt_billing_manager_home.dart';
 
 class WgtAppContextEms extends StatelessWidget {
   const WgtAppContextEms({super.key, this.pageRoute});
@@ -15,12 +15,10 @@ class WgtAppContextEms extends StatelessWidget {
 
   Widget getRoutePage() {
     switch (pageRoute) {
-      case PagPageRoute.emsDashboard:
-        return const WgtEmsDashboard();
       case PagPageRoute.billingManager:
-        return const WgtBillingManager();
+        return WgtBillingManagerHome(pagAppContext: appCtxEms);
       default:
-        return const WgtEmsDashboard();
+        return WgtBillingManagerHome(pagAppContext: appCtxEms);
     }
   }
 }

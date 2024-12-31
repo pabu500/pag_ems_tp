@@ -8,6 +8,7 @@ import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/model/scope/mdl_pag_scope2.dart';
+import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/vendor_helper.dart';
 import 'package:buff_helper/pag_helper/wgt/scope/wgt_scope_selector3.dart';
@@ -18,7 +19,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
-import 'package:pag_ems_tp/app_context/wgt_app_context_ems.dart';
+import 'package:pag_ems_tp/app_context/ems/wgt_app_context_ems.dart';
 import 'package:pag_ems_tp/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:pag_ems_tp/pg_splash.dart';
@@ -108,7 +109,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
       }
       if (_loggedInUser == null) {
         if (mounted) {
-          context.go('/${getRoute(PagPageRoute.projectPublicFront)}');
+          context.go(getRoute(PagPageRoute.projectPublicFront));
         }
       } else {
         if (mounted) {
@@ -220,6 +221,8 @@ class _ConsoleHomeState extends State<ConsoleHome>
     pageTitle = getPageTitle(widget.pageRoute);
 
     _ini();
+
+    routeGuard(context, _loggedInUser, appContext: _currentAppContext);
   }
 
   @override
@@ -257,13 +260,14 @@ class _ConsoleHomeState extends State<ConsoleHome>
                     if (kDebugMode) {
                       print(snapshot.error);
                     }
-                    return homeBoard(
-                      'Error',
-                      getErrorTextPrompt(
-                        context: context,
-                        errorText: 'Serivce Error',
-                      ),
-                    );
+                    return PgTechIssue();
+                    // homeBoard(
+                    //   'Error',
+                    //   getErrorTextPrompt(
+                    //     context: context,
+                    //     errorText: 'Serivce Error',
+                    //   ),
+                    // );
                   } else {
                     if (_loggedInUser == null || _loggedInUser!.isEmpty) {
                       if (kDebugMode) {
@@ -325,8 +329,10 @@ class _ConsoleHomeState extends State<ConsoleHome>
         ),
       ),
       drawer: WgtAppContextDrawer(
+        loggedInUser: _loggedInUser!,
+        appContext: _currentAppContext,
         title: _currentAppContext.label,
-        routeList: _currentAppContext.menuRouteList!,
+        // routeList: _currentAppContext.menuRouteList!,
       ),
       body: SafeArea(
         child: Center(
@@ -467,7 +473,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
       print('getAppContextBoard: ${_currentAppContext.name}');
     }
 
-    routeGuard(context, _loggedInUser, appContext: _currentAppContext);
+    // routeGuard(context, _loggedInUser, appContext: _currentAppContext);
 
     late Widget board;
     switch (_currentAppContext.appContextType) {
@@ -712,15 +718,15 @@ class _ConsoleHomeState extends State<ConsoleHome>
     );
   }
 
-  Scaffold homeBoard(String boardTitle, Widget contentWidget) {
-    return Scaffold(
-      appBar: AppBar(title: Center(child: Text(boardTitle))),
-      body: CustomPaint(
-        painter: NeoDotPatternPainter(
-          color: Colors.grey.shade600.withAlpha(80),
-        ),
-        child: Center(child: contentWidget),
-      ),
-    );
-  }
+  // Scaffold homeBoard(String boardTitle, Widget contentWidget) {
+  //   return Scaffold(
+  //     appBar: AppBar(title: Center(child: Text(boardTitle))),
+  //     body: CustomPaint(
+  //       painter: NeoDotPatternPainter(
+  //         color: Colors.grey.shade600.withAlpha(80),
+  //       ),
+  //       child: Center(child: contentWidget),
+  //     ),
+  //   );
+  // }
 }

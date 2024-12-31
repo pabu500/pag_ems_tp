@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:buff_helper/pag_helper/app_context_list.dart';
 import 'package:buff_helper/pag_helper/comm/comm_batch_op.dart';
 import 'package:buff_helper/pag_helper/def/def_page_route.dart';
@@ -75,6 +77,9 @@ class _PgSplashState extends State<PgSplash> {
         if (kDebugMode) {
           print('doPostLogin: done');
         }
+        if (mounted) {
+          routeGuard(context, loggedInUser, goHome: true);
+        }
       });
     } catch (e) {
       if (kDebugMode) {
@@ -98,15 +103,15 @@ class _PgSplashState extends State<PgSplash> {
       if (kDebugMode) {
         print('_isDoingPostLogin = false');
       }
-      if (loggedInUser == null || _userErrorText.isNotEmpty) {
-        if (mounted) {
-          context.push('/${getRoute(PagPageRoute.projectPublicFront)}');
-        }
-      } else {
-        if (mounted) {
-          routeGuard(context, loggedInUser, goHome: true);
-        }
-      }
+      // if (loggedInUser == null || _userErrorText.isNotEmpty) {
+      //   if (mounted) {
+      //     context.go(getRoute(PagPageRoute.projectPublicFront));
+      //   }
+      // } else {
+      //   if (mounted) {
+      //     routeGuard(context, loggedInUser, goHome: true);
+      //   }
+      // }
     }
   }
 
@@ -211,19 +216,10 @@ class _PgSplashState extends State<PgSplash> {
                               return getErrorTextPrompt(
                                   context: context, errorText: _userErrorText);
                             } else {
-                              if (loggedInUser == null ||
-                                  loggedInUser!.isEmpty) {
-                                if (kDebugMode) {
-                                  print('No user');
-                                }
-                                return const PgProjectPublicFront();
-                              } else {
-                                if (kDebugMode) {
-                                  print('User: ${loggedInUser!.username}');
-                                }
-
-                                return completedWidget();
+                              if (kDebugMode) {
+                                print('User: ${loggedInUser?.username}');
                               }
+                              return completedWidget();
                             }
                         }
                       },
@@ -241,6 +237,13 @@ class _PgSplashState extends State<PgSplash> {
         errorText: _userErrorText,
       );
     }
+
+    // if (loggedInUser == null || _userErrorText.isNotEmpty) {
+    //   context.push(getRoute(PagPageRoute.projectPublicFront));
+    // } else {
+    //   routeGuard(context, loggedInUser, goHome: true);
+    // }
+
     return _showProgress
         ? WgtProgressBar(
             width: 180,

@@ -1,3 +1,7 @@
+import 'package:buff_helper/pag_helper/model/app/mdl_app_context_config.dart';
+import 'package:buff_helper/pag_helper/model/app/mdl_page_config.dart';
+import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
+import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,13 +12,17 @@ import 'package:provider/provider.dart';
 class WgtAppContextDrawer extends StatefulWidget {
   const WgtAppContextDrawer({
     super.key,
+    required this.loggedInUser,
+    required this.appContext,
     required this.title,
-    required this.routeList,
+    // required this.routeList,
     this.tileColor,
   });
 
+  final MdlPagUser loggedInUser;
+  final MdlPagAppContext appContext;
   final String title;
-  final List<Map<String, dynamic>> routeList;
+  // final List<Map<String, dynamic>> routeList;
 
   final Color? tileColor;
 
@@ -63,11 +71,34 @@ class _WgtAppContextDrawerState extends State<WgtAppContextDrawer> {
   }
 
   List<Widget> _buildDrawerTiles(PagAppProvider appModel) {
+    List<MdlPagAppContextConfig> appCtxConfigList =
+        widget.loggedInUser.selectedScope.projectProfile!.appContextConfigList;
+    MdlPagAppContextConfig? appCtxConfigCurAppCtx;
+    for (MdlPagAppContextConfig appCtxConfig in appCtxConfigList) {
+      if (appCtxConfig.appContextName == widget.appContext.name) {
+        appCtxConfigCurAppCtx = appCtxConfig;
+        break;
+      }
+    }
+    assert(appCtxConfigCurAppCtx != null);
+
     List<Widget> tiles = [];
-    for (Map<String, dynamic> routeItem in widget.routeList) {
+    for (Map<String, dynamic> routeItem in widget.appContext.menuRouteList!) {
       String label = routeItem['label'];
       String route = routeItem['route'];
       PagPageRoute pr = routeItem['pr'];
+
+      bool prFound = false;
+      for (MdlPagPageConfig pc in appCtxConfigCurAppCtx!.pageConfigList) {
+        if (pc.name == route) {
+          prFound = true;
+          break;
+        }
+      }
+      if (!prFound) {
+        continue;
+      }
+
       tiles.add(
         ListTile(
           title: Text(

@@ -508,23 +508,27 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
 
   void _filterTenantList() {
     String query = _tenantController.text.toLowerCase();
-    setState(() {
-      _filteredEbTenantList = _ebTenantList
-          .where((tenant) => tenant.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _filteredEbTenantList = _ebTenantList
+            .where(
+                (tenant) => tenant.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _selectedTenant = null;
     _isAdmin = (widget.tenenatName == 'admin');
     _tenantController.text = widget.tenantAccountNumber;
     _filteredEbTenantList = _ebTenantList;
     _getTenantListFuture = getTenantListFuture();
+
     _tenantController.addListener(_filterTenantList);
+
     // _tenantController.addListener(() {
     //   filterDropdownEntries(_tenantController.text);
     // });
