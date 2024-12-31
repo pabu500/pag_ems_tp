@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pag_ems_tp/app_context/ems/wgt_app_context_ems.dart';
-import 'package:pag_ems_tp/app_context_drawer.dart';
+import 'package:buff_helper/pag_helper/wgt/app/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:pag_ems_tp/pg_splash.dart';
 import 'package:pag_ems_tp/user_menu.dart';
@@ -137,7 +137,8 @@ class _ConsoleHomeState extends State<ConsoleHome>
             PagUserKey.username.name: username,
             PagUserKey.password.name: password,
             PagUserKey.email.name: '',
-            'portal_type': PagPortalType.emsTp.label,
+            'portal_type_name': PagPortalType.emsTp.name,
+            'portal_type_label': PagPortalType.emsTp.label,
           }),
         );
 

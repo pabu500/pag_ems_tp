@@ -25,7 +25,8 @@ Future<void> doPostLogin(
       pagAppConfig,
       loggedInUser,
       {
-        'portal_type': PagPortalType.emsTp.label,
+        'portal_type_name': PagPortalType.emsTp.name,
+        'portal_type_label': PagPortalType.emsTp.label,
         'user_id': loggedInUser.id.toString(),
         'user_role_list': loggedInUser.roleList.map((e) => e.toJson()).toList(),
         'task_name': taskName,

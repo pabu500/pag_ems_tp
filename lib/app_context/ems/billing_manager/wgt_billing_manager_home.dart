@@ -1,5 +1,9 @@
+import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
+import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
+import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'wgt_eb_bill.dart';
 
@@ -17,12 +21,25 @@ class WgtBillingManagerHome extends StatefulWidget {
 
 class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
     with TickerProviderStateMixin {
+  late final MdlPagUser? loggedInUser;
+  final List<MdlPagTenant> tenantList = [];
+
   TabController? _tabController;
   late final List<Widget> _tabViewChildren;
+
+  void _populateTenantList() {
+    tenantList.clear();
+    tenantList.addAll(loggedInUser!.getScopeTenantList());
+  }
 
   @override
   void initState() {
     super.initState();
+
+    loggedInUser =
+        Provider.of<PagUserProvider>(context, listen: false).currentUser;
+
+    _populateTenantList();
 
     _tabViewChildren = [
       const WgtEbBillTenant(

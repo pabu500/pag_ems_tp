@@ -1,3 +1,4 @@
+import 'package:buff_helper/pag_helper/def/def_role.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_config.dart';
 import 'package:buff_helper/pag_helper/pag_project_repo.dart';
 
@@ -28,6 +29,7 @@ const List<PagPortalProjectScope> activePortalPagProjectScopeList = [
 ];
 
 final MdlPagAppConfig pagAppConfig = MdlPagAppConfig(
+  portalType: PagPortalType.emsTp,
   loadDashboard: loadDashboard,
   useDevOresvc: useDevOresvc,
   useDevUsersvc: useDevUsersvc,
