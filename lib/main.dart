@@ -4,6 +4,7 @@ import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/pag_project_repo.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
+import 'package:buff_helper/pag_helper/wgt/user/pg_my_profile.dart';
 import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
 import 'package:buff_helper/up_helper/model/model_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -186,6 +187,14 @@ final GoRouter _router = GoRouter(
         Provider.of<PagAppProvider>(context, listen: false).prCur =
             PagPageRoute.login;
         return const PgLogin();
+      },
+    ),
+    GoRoute(
+      path: getRoute(PagPageRoute.myProfile),
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.myProfile;
+        return PgMyProfile(appConfig: pagAppConfig);
       },
     ),
     GoRoute(

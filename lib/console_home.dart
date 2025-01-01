@@ -23,7 +23,7 @@ import 'package:pag_ems_tp/app_context/ems/wgt_app_context_ems.dart';
 import 'package:buff_helper/pag_helper/wgt/app/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:pag_ems_tp/pg_splash.dart';
-import 'package:pag_ems_tp/user_menu.dart';
+import 'package:buff_helper/pag_helper/wgt/user/user_menu.dart';
 import 'package:provider/provider.dart';
 import '../app_config.dart';
 
@@ -401,53 +401,6 @@ class _ConsoleHomeState extends State<ConsoleHome>
         ),
       ),
     );
-  }
-
-  Widget getFhDataUpdate() {
-    bool show = _currentAppContext == appCtxConsoleHome ||
-        widget.pageRoute == PagPageRoute.esInsights;
-    if (_colorAnimationController != null &&
-        _rotationAnimationController != null) {
-      return !show
-          ? const SizedBox()
-          : AnimatedBuilder(
-              animation: _colorAnimationController!,
-              builder: (context, child) {
-                return Positioned(
-                  bottom: 0,
-                  left: 0,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      horizontalSpaceSmall,
-                      RotationTransition(
-                        turns: _rotationAnimation,
-                        child: Icon(
-                          Symbols.sync,
-                          size: 15,
-                          color: _colorAnimation.value,
-                        ),
-                      ),
-                      horizontalSpaceTiny,
-                      _fetchedTimeStr == '-'
-                          ? xtWait(
-                              anim: 'horizontalRotatingDots',
-                              color: _colorAnimation.value,
-                            )
-                          : Text(
-                              _fetchedTimeStr,
-                              style: TextStyle(
-                                fontSize: 13.6,
-                                color: _colorAnimation.value,
-                              ),
-                            ),
-                    ],
-                  ),
-                );
-              },
-            );
-    }
-    return const SizedBox();
   }
 
   Widget buildTitleWidget() {
