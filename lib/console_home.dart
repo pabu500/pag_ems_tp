@@ -4,6 +4,8 @@ import 'package:buff_helper/pag_helper/app_context_list.dart';
 import 'package:buff_helper/pag_helper/comm/comm_user_service.dart';
 import 'package:buff_helper/pag_helper/def/def_page_route.dart';
 import 'package:buff_helper/pag_helper/def/def_role.dart';
+import 'package:buff_helper/pag_helper/model/acl/mdl_pag_role.dart';
+import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
@@ -12,6 +14,7 @@ import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/vendor_helper.dart';
 import 'package:buff_helper/pag_helper/wgt/scope/wgt_scope_selector3.dart';
+import 'package:buff_helper/pag_helper/wgt/user/wgt_user_tenant_selector.dart';
 import 'package:buff_helper/pag_helper/wgt/wgt_pag.dart';
 import 'package:buff_helper/pkg_buff_helper.dart';
 import 'package:buff_helper/xt_ui/wdgt/wgt_pag_wait.dart';
@@ -56,46 +59,29 @@ class _ConsoleHomeState extends State<ConsoleHome>
 
   late String pageTitle;
 
-  RenderBox? _renderBox;
-
   bool _showLeftSideSlider = true;
   final double sliderWidth = 250.0;
-  late double _sliderLeftPosition = 0; //-sliderWidth;
-  UniqueKey? _sliderRefreshKey;
   bool _leftSliderIsStack = true;
-  bool _rightSliderIsStack = true;
-  bool _showAppCtxMenu = true;
-  bool _showSiteSelectorSlider = true;
 
-  bool _isFetchingAppCtxData = false;
   Timer? _fhRefreshTimer;
-  String _fetchedTimeStr = '';
   Timer? _refreshStrAnimTimer;
   AnimationController? _colorAnimationController;
   late Animation<Color?> _colorAnimation;
   AnimationController? _rotationAnimationController;
   late Animation<double> _rotationAnimation;
 
+  MdlPagTenant? _selectedTenant;
+
   Future<void> loadAppSetting() async {
     try {
       _loggedInUser = await checkLoginStatus();
 
       if (_loggedInUser != null) {
-        // _loggedInUser = user;
-
         if (mounted) {
           if (kDebugMode) {
             // NOTE: DO NOT USE GoRouterState.of(context).path
             // will cause rebuild issue
             // print('current route:${GoRouterState.of(context).path}');
-          }
-          Provider.of<PagUserProvider>(context, listen: false).currentUser =
-              _loggedInUser;
-        }
-
-        if (mounted) {
-          if (kDebugMode) {
-            print('Fetching App Context Data on load');
           }
         }
       }
@@ -113,7 +99,9 @@ class _ConsoleHomeState extends State<ConsoleHome>
         }
       } else {
         if (mounted) {
-          routeGuard(context, _loggedInUser, goHome: true);
+          Provider.of<PagUserProvider>(context, listen: false)
+              .setCurrentUser(_loggedInUser!);
+          context.go(getRoute(PagPageRoute.splash));
         }
       }
     }
@@ -171,19 +159,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
     });
   }
 
-  void _loadPref() {
-    dynamic prefStr = readFromSharedPref('scope_nav_bar');
-    Map<String, dynamic> pref = json.decode(prefStr ?? '{}');
-
-    if (pref.isNotEmpty) {
-      _leftSliderIsStack = pref['isStack'] ?? true;
-      _showLeftSideSlider = pref['showSlider'] ?? true;
-      // print('site_selector_bar: $_leftSliderIsStack, $_showLeftSideSlider');
-      if (_leftSliderIsStack && !_showLeftSideSlider) {
-        _sliderLeftPosition = -sliderWidth;
-      }
-    }
-  }
+  void _loadPref() {}
 
   PagPageRoute? _boardToReset;
   void _resetPanelPositions() {
@@ -203,7 +179,6 @@ class _ConsoleHomeState extends State<ConsoleHome>
 
     _loadPref();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _renderBox = context.findRenderObject() as RenderBox;
       setState(() {});
     });
 
@@ -255,7 +230,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
                   if (kDebugMode) {
                     print('waiting...');
                   }
-                  return const PgSplash();
+                  return PgSplash(doPostLogin: _loggedInUser != null);
                 default:
                   if (snapshot.hasError) {
                     if (kDebugMode) {
@@ -323,7 +298,21 @@ class _ConsoleHomeState extends State<ConsoleHome>
           },
         ),
         leadingWidth: 230,
-        actions: const [UserMenu()],
+        actions: [
+          UserMenu(
+            appConfig: pagAppConfig,
+            onRoleSelected: (MdlPagRole role) {
+              if (kDebugMode) {
+                print('Role: ${role.name}');
+              }
+              setState(() {
+                _loggedInUser!.selectedRole = role;
+                _scopeSelectorKey = UniqueKey();
+                _contextRefreshKey = UniqueKey();
+              });
+            },
+          )
+        ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(ribbonHeight),
           child: Column(children: [getAppContextRibbon(), getNoticeRibbon()]),
@@ -417,7 +406,44 @@ class _ConsoleHomeState extends State<ConsoleHome>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.end,
-        children: [widget.icon ?? const SizedBox(), getScopeSelector()],
+        children: [
+          widget.icon ?? const SizedBox(),
+          getScopeSelector(),
+          horizontalSpaceRegular,
+          Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).hintColor.withAlpha(80),
+              ),
+              borderRadius: BorderRadius.circular(5),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+            child: Row(
+              children: [
+                Text(
+                  'Tenant: ',
+                  style: TextStyle(
+                    color: Theme.of(context).hintColor,
+                    fontSize: 15,
+                  ),
+                ),
+                WgtUserTenantSelector(
+                  appConfig: pagAppConfig,
+                  loggedInUser: _loggedInUser!,
+                  onTenantSelected: (tenant) {
+                    if (kDebugMode) {
+                      print('Tenant: ${tenant.name}');
+                    }
+                    setState(() {
+                      _selectedTenant = tenant;
+                      _contextRefreshKey = UniqueKey();
+                    });
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -439,9 +465,17 @@ class _ConsoleHomeState extends State<ConsoleHome>
       //     // onStat: _updateSiteFh,
       //   );
       case PagAppContextType.ems:
-        board = WgtAppContextEms(key: _contextRefreshKey, pageRoute: pageRoute);
+        board = WgtAppContextEms(
+          key: _contextRefreshKey,
+          pageRoute: pageRoute,
+          selectedTenant: _selectedTenant,
+        );
       default:
-        board = WgtAppContextEms(key: _contextRefreshKey, pageRoute: pageRoute);
+        board = WgtAppContextEms(
+          key: _contextRefreshKey,
+          pageRoute: pageRoute,
+          selectedTenant: _selectedTenant,
+        );
       // board = WgtAppContextConsoleHome(
       //   key: _contextRefreshKey,
       //   pageRoute: pageRoute,
@@ -551,8 +585,8 @@ class _ConsoleHomeState extends State<ConsoleHome>
           }
 
           _projectLogoKey = UniqueKey();
+          _scopeSelectorKey = UniqueKey();
           _contextRefreshKey = UniqueKey();
-          _sliderRefreshKey = UniqueKey();
         });
       },
     );

@@ -61,23 +61,34 @@ Future<void> doPostLogin(
     throw Exception('no access to this project portal');
   }
 
-  dynamic scopePref = readFromSharedPref('scope_pref');
-  if (kDebugMode) {
-    print('scopePref: $scopePref');
-  }
-  Map<String, dynamic> scopePrefMap = json.decode(scopePref ?? '{}');
-  String selectedProjectName = scopePrefMap['selected_project_name'] ?? '';
-  String selectedSiteGroupName = scopePrefMap['selected_site_group_name'] ?? '';
-  String selectedSiteName = scopePrefMap['selected_site_name'] ?? '';
-  String selectedBuildingName = scopePrefMap['selected_building_name'] ?? '';
-  String selectedLocationGroupName =
-      scopePrefMap['selected_location_group_name'] ?? '';
-
-  loggedInUser.updateSelectedScopeByName(
-    selectedProjectName,
-    selectedSiteGroupName,
-    selectedSiteName,
-    selectedBuildingName,
-    selectedLocationGroupName,
+  Map<String, dynamic> rolePrefMap = json.decode(
+    readFromSharedPref('role_pref') ?? '{}',
   );
+  String selectedRoleName = rolePrefMap['selected_role_name'] ?? '';
+
+  // only update scope when selectedRoleName is not empty
+  if (selectedRoleName.isNotEmpty) {
+    loggedInUser.updateSelectedRoleByName(selectedRoleName);
+
+    dynamic scopePref = readFromSharedPref('scope_pref');
+    if (kDebugMode) {
+      print('scopePref: $scopePref');
+    }
+    Map<String, dynamic> scopePrefMap = json.decode(scopePref ?? '{}');
+    String selectedProjectName = scopePrefMap['selected_project_name'] ?? '';
+    String selectedSiteGroupName =
+        scopePrefMap['selected_site_group_name'] ?? '';
+    String selectedSiteName = scopePrefMap['selected_site_name'] ?? '';
+    String selectedBuildingName = scopePrefMap['selected_building_name'] ?? '';
+    String selectedLocationGroupName =
+        scopePrefMap['selected_location_group_name'] ?? '';
+
+    loggedInUser.updateSelectedScopeByName(
+      selectedProjectName,
+      selectedSiteGroupName,
+      selectedSiteName,
+      selectedBuildingName,
+      selectedLocationGroupName,
+    );
+  }
 }

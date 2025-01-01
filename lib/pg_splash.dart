@@ -7,7 +7,6 @@ import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/wgt/progress/wgt_progress_bar.dart';
 import 'package:buff_helper/util/util.dart';
-import 'package:buff_helper/xt_ui/painter/pag_bg_painter.dart';
 import 'package:buff_helper/xt_ui/wdgt/info/get_error_text_prompt.dart';
 import 'package:buff_helper/xt_ui/wdgt/wgt_pag_wait.dart';
 import 'package:flutter/foundation.dart';
@@ -74,7 +73,10 @@ class _PgSplashState extends State<PgSplash> {
         if (kDebugMode) {
           print('doPostLogin: done');
         }
+
         if (mounted) {
+          Provider.of<PagUserProvider>(context, listen: false)
+              .setCurrentUser(loggedInUser!);
           routeGuard(context, loggedInUser, goHome: true);
         }
       });
@@ -100,15 +102,6 @@ class _PgSplashState extends State<PgSplash> {
       if (kDebugMode) {
         print('_isDoingPostLogin = false');
       }
-      // if (loggedInUser == null || _userErrorText.isNotEmpty) {
-      //   if (mounted) {
-      //     context.go(getRoute(PagPageRoute.projectPublicFront));
-      //   }
-      // } else {
-      //   if (mounted) {
-      //     routeGuard(context, loggedInUser, goHome: true);
-      //   }
-      // }
     }
   }
 
@@ -250,21 +243,5 @@ class _PgSplashState extends State<PgSplash> {
             loadingMessage: '     loading tenant data...',
           )
         : const WgtPagWait(size: 55);
-  }
-
-  Scaffold homeBoard(String boardTitle, Widget contentWidget) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(child: Text(boardTitle)),
-      ),
-      body: CustomPaint(
-        painter: NeoDotPatternPainter(
-          color: Colors.grey.shade600.withAlpha(80),
-        ),
-        child: Center(
-          child: contentWidget,
-        ),
-      ),
-    );
   }
 }

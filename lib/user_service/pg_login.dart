@@ -53,9 +53,9 @@ class _PgLoginState extends State<PgLogin> {
                 onPostLogin: _onPostLogin,
                 postLoginThen: (MdlPagUser user) {
                   Provider.of<PagUserProvider>(context, listen: false)
-                      .iniUser(user);
-                  Provider.of<PagAppProvider>(context, listen: false)
-                      .iniPageRoute(PagPageRoute.consoleHomeDashboard);
+                      .setCurrentUser(user);
+                  // Provider.of<PagAppProvider>(context, listen: false)
+                  //     .iniPageRoute(PagPageRoute.consoleHomeDashboard);
 
                   context.go(getRoute(PagPageRoute.splash));
                 },

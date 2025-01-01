@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -12,16 +13,18 @@ import 'package:path_provider/path_provider.dart';
 class WgtEbBillTenant extends StatefulWidget {
   const WgtEbBillTenant({
     super.key,
-    required this.tenantIdStr,
-    required this.tenenatName,
-    required this.tenantLabel,
-    required this.tenantAccountNumber,
+    // required this.tenantIdStr,
+    // required this.tenenatName,
+    // required this.tenantLabel,
+    // required this.tenantAccountNumber,
+    this.tenant,
   });
 
-  final String tenantIdStr;
-  final String tenenatName;
-  final String tenantLabel;
-  final String tenantAccountNumber;
+  // final String tenantIdStr;
+  // final String tenenatName;
+  // final String tenantLabel;
+  // final String tenantAccountNumber;
+  final MdlPagTenant? tenant;
 
   @override
   State<WgtEbBillTenant> createState() => _WgtEbBillTenantState();
@@ -493,7 +496,8 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                 if (!_ebTenantList.contains(tenantId)) {
                   return;
                 }
-                await deletePdf(files, widget.tenenatName);
+                // await deletePdf(files, widget.tenenatName);
+                await deletePdf(files, widget.tenant?.name ?? '');
 
                 _getTenantListFuture = getTenantListFuture();
                 await updatePdfList(tenantId);
@@ -522,8 +526,10 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
   void initState() {
     super.initState();
     _selectedTenant = null;
-    _isAdmin = (widget.tenenatName == 'admin');
-    _tenantController.text = widget.tenantAccountNumber;
+    // _isAdmin = (widget.tenenatName == 'admin');
+    _isAdmin = widget.tenant?.name == 'admin' ? true : false;
+    // _tenantController.text = widget.tenantAccountNumber;
+    _tenantController.text = widget.tenant?.accountNumber ?? '';
     _filteredEbTenantList = _ebTenantList;
     _getTenantListFuture = getTenantListFuture();
 
@@ -547,25 +553,36 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
         child: SizedBox(
             width: MediaQuery.of(context).size.width,
             height: screenHeight > 120 ? screenHeight - 120 : screenHeight,
-            child: FutureBuilder(
-                future: _getTenantListFuture,
-                builder: (BuildContext context, AsyncSnapshot snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                      if (kDebugMode) {
-                        print('eb billing release: pulling data');
+            child: widget.tenant == null
+                ? Center(
+                    child: Text(
+                      'Please select tenant',
+                      style: TextStyle(
+                        fontSize: 21,
+                        color: Theme.of(context).hintColor.withAlpha(80),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : FutureBuilder(
+                    future: _getTenantListFuture,
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          if (kDebugMode) {
+                            print('eb billing release: pulling data');
+                          }
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        default:
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else {
+                            return completedWidget();
+                          }
                       }
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    default:
-                      if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else {
-                        return completedWidget();
-                      }
-                  }
-                })));
+                    })));
   }
 
   Widget completedWidget() {
@@ -615,7 +632,8 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
         child: Row(
       children: [
         DropdownMenu(
-          initialSelection: widget.tenantAccountNumber,
+          // initialSelection: widget.tenantAccountNumber,
+          initialSelection: widget.tenant?.accountNumber,
           enabled: _isAdmin,
           width: 200,
           controller: _tenantController,

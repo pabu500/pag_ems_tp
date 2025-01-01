@@ -11,9 +11,11 @@ class WgtBillingManagerHome extends StatefulWidget {
   const WgtBillingManagerHome({
     super.key,
     required this.pagAppContext,
+    this.selectedTenant,
   });
 
   final MdlPagAppContext pagAppContext;
+  final MdlPagTenant? selectedTenant;
 
   @override
   State<WgtBillingManagerHome> createState() => _WgtBillingManagerHomeState();
@@ -22,31 +24,26 @@ class WgtBillingManagerHome extends StatefulWidget {
 class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
     with TickerProviderStateMixin {
   late final MdlPagUser? loggedInUser;
-  final List<MdlPagTenant> tenantList = [];
 
   TabController? _tabController;
   late final List<Widget> _tabViewChildren;
-
-  void _populateTenantList() {
-    tenantList.clear();
-    tenantList.addAll(loggedInUser!.getScopeTenantList());
-  }
 
   @override
   void initState() {
     super.initState();
 
+    // assert(widget.selectedTenant != null);
+
     loggedInUser =
         Provider.of<PagUserProvider>(context, listen: false).currentUser;
 
-    _populateTenantList();
-
     _tabViewChildren = [
-      const WgtEbBillTenant(
-        tenantIdStr: '123',
-        tenenatName: 'tenant-1', //'admin'
-        tenantLabel: 'Tenant 1',
-        tenantAccountNumber: 'A5310014',
+      WgtEbBillTenant(
+        // tenantIdStr: '123',
+        // tenenatName: 'tenant-1', //'admin'
+        // tenantLabel: 'Tenant 1',
+        // tenantAccountNumber: 'A5310014',
+        tenant: widget.selectedTenant,
       ),
     ];
 
