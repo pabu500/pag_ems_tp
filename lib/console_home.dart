@@ -54,6 +54,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
   UniqueKey? _projectLogoKey;
   UniqueKey? _scopeSelectorKey;
   UniqueKey? _contextRefreshKey;
+  UniqueKey? _tenantRefreshKey;
 
   late String _activeScopeStr;
 
@@ -309,6 +310,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
                 _loggedInUser!.selectedRole = role;
                 _scopeSelectorKey = UniqueKey();
                 _contextRefreshKey = UniqueKey();
+                _tenantRefreshKey = UniqueKey();
               });
             },
           )
@@ -428,11 +430,12 @@ class _ConsoleHomeState extends State<ConsoleHome>
                   ),
                 ),
                 WgtUserTenantSelector(
+                  key: _tenantRefreshKey,
                   appConfig: pagAppConfig,
                   loggedInUser: _loggedInUser!,
                   onTenantSelected: (tenant) {
                     if (kDebugMode) {
-                      print('Tenant: ${tenant.name}');
+                      print('Tenant: ${tenant?.name}');
                     }
                     setState(() {
                       _selectedTenant = tenant;
@@ -587,6 +590,7 @@ class _ConsoleHomeState extends State<ConsoleHome>
           _projectLogoKey = UniqueKey();
           _scopeSelectorKey = UniqueKey();
           _contextRefreshKey = UniqueKey();
+          _tenantRefreshKey = UniqueKey();
         });
       },
     );

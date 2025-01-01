@@ -90,15 +90,17 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
         }
         _ebTenantList.add(tenant['folder_name']);
       }
-      setState(() {
-        if (_selectedTenant == null) {
-          _filteredEbTenantList = _ebTenantList;
-        } else {
-          _filteredEbTenantList = _ebTenantList
-              .where((element) => element == _selectedTenant)
-              .toList();
-        }
-      });
+      if (mounted) {
+        setState(() {
+          if (_selectedTenant == null) {
+            _filteredEbTenantList = _ebTenantList;
+          } else {
+            _filteredEbTenantList = _ebTenantList
+                .where((element) => element == _selectedTenant)
+                .toList();
+          }
+        });
+      }
     }
   }
 
