@@ -13,6 +13,7 @@ import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/vendor_helper.dart';
 import 'package:buff_helper/pag_helper/wgt/scope/wgt_scope_selector3.dart';
+import 'package:buff_helper/pag_helper/wgt/user/pg_splash.dart';
 import 'package:buff_helper/pag_helper/wgt/user/wgt_user_tenant_selector.dart';
 import 'package:buff_helper/pag_helper/wgt/wgt_pag.dart';
 import 'package:buff_helper/pkg_buff_helper.dart';
@@ -24,8 +25,8 @@ import 'package:material_symbols_icons/symbols.dart';
 import 'package:pag_ems_tp/app_context/ems/wgt_app_context_ems.dart';
 import 'package:buff_helper/pag_helper/wgt/app/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
-import 'package:pag_ems_tp/pg_splash.dart';
 import 'package:buff_helper/pag_helper/wgt/user/user_menu.dart';
+import 'package:pag_ems_tp/user_service/post_login.dart';
 import 'package:provider/provider.dart';
 import '../../app_config.dart';
 
@@ -44,6 +45,7 @@ class _AppContextBoardState extends State<AppContextBoard>
   bool _initialised = false;
 
   late MdlPagUser? _loggedInUser;
+  bool _isLoggingIn = false;
 
   late MdlPagAppContext _currentAppContext;
 
@@ -71,8 +73,11 @@ class _AppContextBoardState extends State<AppContextBoard>
   late Animation<double> _rotationAnimation;
 
   MdlPagTenant? _selectedTenant;
-
+  bool _userError = false;
   Future<void> loadAppSetting() async {
+    _userError = false;
+    _isLoggingIn = true;
+
     try {
       _loggedInUser = await checkLoginStatus();
 
@@ -89,7 +94,9 @@ class _AppContextBoardState extends State<AppContextBoard>
       if (kDebugMode) {
         print(e);
       }
+      _userError = true;
     } finally {
+      _isLoggingIn = false;
       if (kDebugMode) {
         print('loadAppSetting done');
       }
@@ -99,9 +106,9 @@ class _AppContextBoardState extends State<AppContextBoard>
         }
       } else {
         if (mounted) {
-          Provider.of<PagUserProvider>(context, listen: false)
-              .setCurrentUser(_loggedInUser!);
-          context.go(getRoute(PagPageRoute.splash));
+          // Provider.of<PagUserProvider>(context, listen: false)
+          //     .setCurrentUser(_loggedInUser!);
+          // context.go(getRoute(PagPageRoute.splash));
         }
       }
     }
@@ -216,21 +223,39 @@ class _AppContextBoardState extends State<AppContextBoard>
       print('AppContextBoard.build()');
     }
 
-    bool loggedIn = _loggedInUser != null && !_loggedInUser!.isEmpty;
-    if (kDebugMode) {
-      print('app_home: loggedIn: $loggedIn');
+    bool isLoggedIn = false;
+    if (_loggedInUser != null) {
+      if (!_loggedInUser!.isEmpty) {
+        isLoggedIn = true;
+      }
     }
 
-    return !loggedIn
+    bool scopeReady = false;
+    if (_loggedInUser != null) {
+      if (!_loggedInUser!.selectedScope.isEmpty) {
+        scopeReady = true;
+      }
+    }
+
+    if (kDebugMode) {
+      print('app_home: loggedIn: $isLoggedIn, scopeReady: $scopeReady');
+    }
+
+    return !isLoggedIn
         ? FutureBuilder<void>(
             future: loadAppSetting(),
             builder: (context, AsyncSnapshot<void> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
                   if (kDebugMode) {
-                    print('waiting...');
+                    print(
+                        'snapshot.connectionState: ${snapshot.connectionState}');
                   }
-                  return PgSplash(doPostLogin: _loggedInUser != null);
+                  return PgSplash(
+                      appConfig: pagAppConfig,
+                      appCtxBoardContext: context,
+                      doPostLoginFunction: doPostLogin,
+                      doPostLogin: _loggedInUser != null);
                 default:
                   if (snapshot.hasError) {
                     if (kDebugMode) {
@@ -255,7 +280,29 @@ class _AppContextBoardState extends State<AppContextBoard>
                         print('User: ${_loggedInUser!.username}');
                       }
 
-                      return completedWidget();
+                      return
+                          // completedWidget();
+                          scopeReady
+                              ? completedWidget()
+                              : PgSplash(
+                                  key: UniqueKey(),
+                                  appConfig: pagAppConfig,
+                                  loggedInUser: _loggedInUser,
+                                  doPostLogin: true,
+                                  doPostLoginFunction: doPostLogin,
+                                  showProgress: true,
+                                  appCtxBoardContext: context,
+                                  onSplashDone: (user) {
+                                    setState(() {
+                                      Provider.of<PagUserProvider>(
+                                        context,
+                                        listen: false,
+                                      ).setCurrentUser(user);
+                                    });
+                                    // GoRouter.of(context).go(
+                                    //     getRoute(PagPageRoute.projectPublicFront));
+                                  },
+                                );
                     }
                   }
               }

@@ -159,13 +159,13 @@ final GoRouter _router = GoRouter(
             pageRoute: PagPageRoute.consoleHomeDashboard);
       },
     ),
-    GoRoute(
-        path: getRoute(PagPageRoute.splash),
-        builder: (context, state) {
-          Provider.of<PagAppProvider>(context, listen: false).prCur =
-              PagPageRoute.splash;
-          return const PgSplash();
-        }),
+    // GoRoute(
+    //     path: getRoute(PagPageRoute.splash),
+    //     builder: (context, state) {
+    //       Provider.of<PagAppProvider>(context, listen: false).prCur =
+    //           PagPageRoute.splash;
+    //       return const PgSplash();
+    //     }),
     GoRoute(
       path: getRoute(PagPageRoute.projectPublicFront),
       builder: (context, state) {

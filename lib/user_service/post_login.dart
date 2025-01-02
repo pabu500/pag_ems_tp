@@ -7,10 +7,12 @@ import 'package:buff_helper/pag_helper/model/acl/mdl_pag_svc_claim.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
 import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../app_config.dart';
 
 Future<void> doPostLogin(
+  BuildContext context,
   MdlPagUser loggedInUser, {
   required String taskName,
   bool loadVendorCredential = true,
@@ -43,7 +45,7 @@ Future<void> doPostLogin(
     if (result['user_role_scope_list'] != null) {
       loggedInUser.populateRoleScope(
         result['user_role_scope_list'],
-        lazyLoadScope: 'site_group',
+        pagAppConfig,
       );
     }
   } catch (e) {
