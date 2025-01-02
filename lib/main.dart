@@ -14,7 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pag_ems_tp/app_config.dart';
-import 'package:pag_ems_tp/console_home.dart';
+import 'package:pag_ems_tp/app_context/app_context_board.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:pag_ems_tp/user_service/pg_login.dart';
@@ -155,7 +155,8 @@ final GoRouter _router = GoRouter(
         Provider.of<PagAppProvider>(context, listen: false).prCur =
             PagPageRoute.consoleHomeDashboard;
 
-        return const ConsoleHome(pageRoute: PagPageRoute.consoleHomeDashboard);
+        return const AppContextBoard(
+            pageRoute: PagPageRoute.consoleHomeDashboard);
       },
     ),
     GoRoute(
@@ -202,7 +203,8 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         Provider.of<PagAppProvider>(context, listen: false).prCur =
             PagPageRoute.consoleHomeDashboard;
-        return const ConsoleHome(pageRoute: PagPageRoute.consoleHomeDashboard);
+        return const AppContextBoard(
+            pageRoute: PagPageRoute.consoleHomeDashboard);
       },
     ),
     GoRoute(
@@ -210,7 +212,7 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         Provider.of<PagAppProvider>(context, listen: false).prCur =
             PagPageRoute.billingManager;
-        return const ConsoleHome(pageRoute: PagPageRoute.billingManager);
+        return const AppContextBoard(pageRoute: PagPageRoute.billingManager);
       },
     ),
   ],
