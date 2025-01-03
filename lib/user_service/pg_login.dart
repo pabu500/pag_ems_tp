@@ -79,7 +79,7 @@ class _PgLoginState extends State<PgLogin> {
             doPostLogin: true,
             doPostLoginFunction: doPostLogin,
             showProgress: true,
-            appCtxBoardContext: context,
+            // appCtxBoardContext: context,
             onSplashDone: (user) {
               setState(() {
                 _postLoginDone = true;

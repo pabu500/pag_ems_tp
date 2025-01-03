@@ -254,7 +254,7 @@ class _AppContextBoardState extends State<AppContextBoard>
                   }
                   return PgSplash(
                       appConfig: pagAppConfig,
-                      appCtxBoardContext: context,
+                      // appCtxBoardContext: context,
                       doPostLoginFunction: doPostLogin,
                       doPostLogin: _loggedInUser != null);
                 default:
@@ -292,7 +292,7 @@ class _AppContextBoardState extends State<AppContextBoard>
                                   doPostLogin: true,
                                   doPostLoginFunction: doPostLogin,
                                   showProgress: true,
-                                  appCtxBoardContext: context,
+                                  // appCtxBoardContext: context,
                                   onSplashDone: (user) {
                                     setState(() {
                                       Provider.of<PagUserProvider>(
