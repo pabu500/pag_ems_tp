@@ -20,8 +20,6 @@ import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:pag_ems_tp/user_service/pg_login.dart';
 import 'package:provider/provider.dart';
 
-import 'pg_splash.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
