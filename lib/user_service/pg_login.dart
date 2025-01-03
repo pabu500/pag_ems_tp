@@ -2,14 +2,13 @@ import 'package:buff_helper/pag_helper/app_context_list.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_splash.dart';
+import 'package:buff_helper/pag_helper/wgt/user/post_login.dart';
 import 'package:buff_helper/pag_helper/wgt/user/wgt_login.dart';
 import 'package:buff_helper/xt_ui/painter/pag_bg_painter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pag_ems_tp/app_config.dart';
 import 'package:provider/provider.dart';
-
-import 'post_login.dart';
 
 class PgLogin extends StatefulWidget {
   const PgLogin({super.key});
