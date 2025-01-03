@@ -870,10 +870,10 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                               });
                                             })),
                                   const DataColumn(
-                                      columnWidth: FlexColumnWidth(),
+                                      // columnWidth: FlexColumnWidth(),
                                       label: Expanded(
-                                        child: Text('PDF'),
-                                      )),
+                                    child: Text('PDF'),
+                                  )),
                                   if (_isAdmin)
                                     const DataColumn(label: Text('Delete')),
                                   const DataColumn(label: Text('Download'))
