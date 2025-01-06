@@ -855,6 +855,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                         width: MediaQuery.of(context).size.width - 40,
                         child: pdfList.isNotEmpty
                             ? DataTable(
+                                columnSpacing: 0,
                                 dividerThickness: 0.2,
                                 columns: [
                                   if (_isAdmin)
@@ -875,8 +876,17 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                     child: Text('PDF'),
                                   )),
                                   if (_isAdmin)
-                                    const DataColumn(label: Text('Delete')),
-                                  const DataColumn(label: Text('Download'))
+                                    //_isAdmin
+                                    const DataColumn(
+                                        // tooltip: 'Delete PDF',
+                                        label: Text('Delete'),
+                                        headingRowAlignment:
+                                            MainAxisAlignment.end),
+                                  const DataColumn(
+                                      // tooltip: 'Download PDF',
+                                      label: Text('Download'),
+                                      headingRowAlignment:
+                                          MainAxisAlignment.end)
                                 ],
                                 rows: List.generate(pdfList.length, (index) {
                                   final filename =
@@ -899,7 +909,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                             ),
                                           ),
                                         ),
-                                      DataCell(Expanded(
+                                      DataCell(SizedBox(
                                         // width:
                                         //     MediaQuery.of(context).size.width -
                                         //         60 -
@@ -909,54 +919,60 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                         //         40 -
                                         //         40 -
                                         //         200,
-                                        child: SizedBox(
-                                          child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Flexible(
-                                                fit: FlexFit.tight,
-                                                child: Text(
-                                                  filename,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            Flexible(
+                                              fit: FlexFit.tight,
+                                              child: Text(
+                                                filename,
+                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       )),
                                       if (_isAdmin)
-                                        DataCell(SizedBox(
-                                          width: 40,
-                                          child: IconButton(
-                                            color: Colors.red,
-                                            // hoverColor: Colors.transparent,
-                                            icon: const Icon(
-                                              Icons.delete,
+                                        //_isAdmin
+                                        DataCell(Container(
+                                          alignment: Alignment.centerRight,
+                                          // width: 40,
+                                          child: SizedBox(
+                                            width: 40,
+                                            child: IconButton(
+                                              color: Colors.red,
+                                              // hoverColor: Colors.transparent,
+                                              icon: const Icon(
+                                                Icons.delete,
+                                              ),
+                                              onPressed: () =>
+                                                  _showConfirmationDialog(
+                                                      context,
+                                                      [filename],
+                                                      _selectedTenant!),
+                                              tooltip: 'Delete',
+                                              focusColor: Colors.transparent,
                                             ),
-                                            onPressed: () =>
-                                                _showConfirmationDialog(
-                                                    context,
-                                                    [filename],
-                                                    _selectedTenant!),
-                                            tooltip: 'Delete',
-                                            focusColor: Colors.transparent,
                                           ),
                                         )),
-                                      DataCell(SizedBox(
-                                        width: 60,
-                                        child: IconButton(
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary,
-                                          icon:
-                                              const Icon(Icons.cloud_download),
-                                          onPressed: () => _downloadPdf(
-                                              filename, _selectedTenant!),
-                                          tooltip: 'Download',
+                                      DataCell(Container(
+                                        alignment: Alignment.centerRight,
+                                        // width: 60,
+                                        child: SizedBox(
+                                          width: 65,
+                                          child: IconButton(
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary,
+                                            icon: const Icon(
+                                                Icons.cloud_download),
+                                            onPressed: () => _downloadPdf(
+                                                filename, _selectedTenant!),
+                                            tooltip: 'Download',
+                                          ),
                                         ),
                                       )),
                                     ],
