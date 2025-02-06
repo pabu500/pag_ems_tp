@@ -7,8 +7,9 @@ import 'package:buff_helper/pag_helper/model/acl/mdl_pag_role.dart';
 import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
+import 'package:buff_helper/pag_helper/model/provider/pag_theme_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
-import 'package:buff_helper/pag_helper/model/scope/mdl_pag_scope2.dart';
+import 'package:buff_helper/pag_helper/model/scope/mdl_pag_scope_profile.dart';
 import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/vendor_helper.dart';
@@ -27,7 +28,6 @@ import 'package:pag_ems_tp/app_context/ems/wgt_app_context_ems.dart';
 import 'package:buff_helper/pag_helper/wgt/app/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:buff_helper/pag_helper/wgt/user/user_menu.dart';
-import 'package:pag_ems_tp/user_service/post_login.dart';
 import 'package:provider/provider.dart';
 import '../../app_config.dart';
 
@@ -75,6 +75,13 @@ class _AppContextBoardState extends State<AppContextBoard>
 
   MdlPagTenant? _selectedTenant;
   bool _userError = false;
+
+  UniqueKey? _themeRefreshKey;
+
+  String _currentThemeKey = defaultThemeKey;
+  late bool _isDarkMode =
+      Provider.of<PagThemeProvider>(context, listen: false).isDark;
+
   Future<void> loadAppSetting() async {
     _userError = false;
     _isLoggingIn = true;
@@ -328,7 +335,8 @@ class _AppContextBoardState extends State<AppContextBoard>
         leading: Builder(
           builder: (BuildContext context) {
             return InkWell(
-              onTap: _loadingPagAppContext
+              onTap: true
+                  // _loadingPagAppContext
                   ? null
                   : () {
                       Scaffold.of(context).openDrawer();
@@ -349,6 +357,7 @@ class _AppContextBoardState extends State<AppContextBoard>
         actions: [
           UserMenu(
             appConfig: pagAppConfig,
+            showTheme: false,
             onRoleSelected: (MdlPagRole role) {
               if (kDebugMode) {
                 print('Role: ${role.name}');
@@ -393,8 +402,30 @@ class _AppContextBoardState extends State<AppContextBoard>
       ),
       floatingActionButton: FloatingActionButton(
         mini: true,
-        backgroundColor: Theme.of(context).hintColor.withAlpha(50),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        shape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: Theme.of(context).hintColor.withAlpha(50),
+            width: 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+        ),
         onPressed: () {
+          // updateLayout() {
+          //   setState(() {
+          //     _boardToReset = widget.pageRoute;
+          //     // _contextRefreshKey = UniqueKey();
+          //     _layoutRefreshKey = UniqueKey();
+          //   });
+          // }
+
+          updateTheme() {
+            setState(() {
+              // _boardToReset = widget.pageRoute;
+              _themeRefreshKey = UniqueKey();
+            });
+          }
+
           //find bottom right position
           RenderBox renderBox = context.findRenderObject() as RenderBox;
           Offset offset = renderBox.localToGlobal(Offset.zero);
@@ -406,21 +437,48 @@ class _AppContextBoardState extends State<AppContextBoard>
             position: position,
             items: [
               PopupMenuItem<int>(
-                value: 0,
-                child: ListTile(
-                  leading: Icon(
-                    Symbols.reset_focus,
-                    color: Theme.of(context).hintColor,
-                  ),
-                  title: Text(
-                    "Reset Panel Positions",
-                    style: TextStyle(color: Theme.of(context).hintColor),
-                  ),
-                  onTap: () {
-                    _resetPanelPositions();
-                    context.pop();
+                value: 2,
+                // onTap: null,
+                enabled: false,
+                child: StatefulBuilder(
+                  builder: (BuildContext context, StateSetter setState) {
+                    return getThemeSelector(context, setState, updateTheme);
                   },
                 ),
+              ),
+              PopupMenuItem<int>(
+                value: 1,
+                enabled: false,
+                child: StatefulBuilder(builder: (context, setState) {
+                  return getModeSelector(context, setState);
+                }),
+              ),
+              PopupMenuItem<int>(
+                value: 0,
+                child: StatefulBuilder(builder: (context, setState) {
+                  // wrap the menu item with StatefulBuilder so that
+                  // we can update the state of the parent widget
+                  // and theme color of the menu will update when theme changes
+                  return ListTile(
+                    leading: Icon(
+                      Symbols.reset_focus,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withAlpha(130),
+                    ),
+                    title: Text("Reset Panel Positions",
+                        style: TextStyle(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withAlpha(130))),
+                    onTap: () {
+                      _resetPanelPositions();
+                      context.pop();
+                    },
+                  );
+                }),
               ),
             ],
             elevation: 8.0,
@@ -622,7 +680,7 @@ class _AppContextBoardState extends State<AppContextBoard>
         locatonGroupProfile,
       ) async {
         setState(() {
-          _loggedInUser!.selectedScope = MdlPagScope2(
+          _loggedInUser!.selectedScope = MdlPagScopeProfile(
             projectProfile: projectProfile,
             siteGroupProfile: siteGroupProfile,
             siteProfile: siteProfile,
@@ -698,6 +756,9 @@ class _AppContextBoardState extends State<AppContextBoard>
         disabled = true;
       }
     }
+    if (disabled) {
+      return const SizedBox();
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: InkWell(
@@ -721,10 +782,13 @@ class _AppContextBoardState extends State<AppContextBoard>
             color: _loadingPagAppContext
                 ? Theme.of(context).hintColor.withAlpha(50)
                 : appContext.appContextType == _currentAppContext.appContextType
-                    ? pag3.withAlpha(200)
+                    ? pag3.withAlpha(210)
                     : disabled
-                        ? Theme.of(context).disabledColor.withAlpha(200)
-                        : Theme.of(context).colorScheme.primary.withAlpha(130),
+                        ? Theme.of(context).disabledColor.withAlpha(210)
+                        : Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withAlpha(210),
             borderRadius: BorderRadius.circular(5),
             border: !appContext.is3rdParty
                 ? null
@@ -745,8 +809,8 @@ class _AppContextBoardState extends State<AppContextBoard>
                 appContext.shortLabel,
                 style: TextStyle(
                   color: disabled
-                      ? Theme.of(context).hintColor.withAlpha(200)
-                      : Theme.of(context).colorScheme.onSurface,
+                      ? Theme.of(context).hintColor.withAlpha(210)
+                      : Theme.of(context).colorScheme.onSecondary,
                   fontSize: 16,
                 ),
               ),
@@ -768,4 +832,143 @@ class _AppContextBoardState extends State<AppContextBoard>
   //     ),
   //   );
   // }
+  Widget getModeSelector(BuildContext context, StateSetter setState) {
+    //dark and light mode
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          InkWell(
+            onTap: _isDarkMode
+                ? null
+                : () {
+                    Provider.of<PagThemeProvider>(context, listen: false)
+                        .setPrefIsDark(isDark: true);
+                    setState(() {
+                      _isDarkMode = true;
+                    });
+                  },
+            child: Container(
+              width: 35,
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: _isDarkMode
+                    ? Theme.of(context).highlightColor.withAlpha(180)
+                    : Theme.of(context).colorScheme.secondary.withAlpha(130),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child:
+                  const Center(child: Icon(Icons.nightlight_round, size: 20)),
+            ),
+          ),
+          // horizontalSpaceSmall,
+          InkWell(
+            onTap: !_isDarkMode
+                ? null
+                : () {
+                    Provider.of<PagThemeProvider>(context, listen: false)
+                        .setPrefIsDark(isDark: false);
+                    setState(() {
+                      _isDarkMode = false;
+                    });
+                  },
+            child: Container(
+              width: 35,
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: _isDarkMode
+                    ? Theme.of(context).colorScheme.secondary.withAlpha(130)
+                    : Theme.of(context).highlightColor.withAlpha(180),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: const Center(child: Icon(Icons.wb_sunny, size: 20)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getThemeSelector(
+      BuildContext context, StateSetter setState, Function updateTheme) {
+    // _currentThemeKey = Provider.of<PagThemeProvider>(context, listen: false).getThemeKey();
+
+    return Container(
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          InkWell(
+            onTap: _currentThemeKey == 'vivid'
+                ? null
+                : () {
+                    Provider.of<PagThemeProvider>(context, listen: false)
+                        .setPrefThemeKey(themeKey: 'vivid');
+                    // context.pop();
+                    setState(() {
+                      // _themeRefreshKey = UniqueKey();
+                      _currentThemeKey = 'vivid';
+                    });
+                    // WidgetsBinding.instance.addPostFrameCallback((_) {
+                    updateTheme.call();
+                    // });
+                  },
+            child: Container(
+              width: 75,
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: _currentThemeKey == 'vivid'
+                    ? Theme.of(context).highlightColor.withAlpha(180)
+                    : Theme.of(context).colorScheme.secondary.withAlpha(130),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Center(
+                child: Text(
+                  'Vivid',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          horizontalSpaceTiny,
+          InkWell(
+            onTap: _currentThemeKey == 'minimal'
+                ? null
+                : () {
+                    Provider.of<PagThemeProvider>(context, listen: false)
+                        .setPrefThemeKey(themeKey: 'minimal');
+                    // context.pop();
+
+                    setState(() {
+                      // _themeRefreshKey = UniqueKey();
+                      _currentThemeKey = 'minimal';
+                    });
+                    // WidgetsBinding.instance.addPostFrameCallback((_) {
+                    updateTheme.call();
+                    // });
+                  },
+            child: Container(
+              width: 75,
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: _currentThemeKey == 'minimal'
+                    ? Theme.of(context).highlightColor.withAlpha(180)
+                    : Theme.of(context).colorScheme.secondary.withAlpha(130),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Center(
+                child: Text(
+                  'Minimal',
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

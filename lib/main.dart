@@ -1,8 +1,11 @@
 import 'package:buff_helper/pag_helper/comm/comm_app.dart';
 import 'package:buff_helper/pag_helper/def/def_page_route.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
+import 'package:buff_helper/pag_helper/model/provider/pag_theme_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/pag_project_repo.dart';
+import 'package:buff_helper/pag_helper/theme/theme_data_minimal.dart';
+import 'package:buff_helper/pag_helper/theme/theme_data_vivid.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_my_profile.dart';
 import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
@@ -73,7 +76,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => PagAppProvider()),
         ChangeNotifierProvider(
-          create: (context) => ThemeProvider(isDark: true),
+          create: (context) => PagThemeProvider(isDark: true),
         ),
         ChangeNotifierProvider(
           create: (context) => PagUserProvider(
@@ -127,8 +130,29 @@ class MainApp extends StatelessWidget {
     appModel.latestVer = latestVer;
     appModel.oreVer = oreVersion;
 
-    return Consumer<ThemeProvider>(
-      builder: (context, ThemeProvider themeNotifier, child) {
+    ThemeData themeData = thmPagNeoLight;
+    ThemeData themeDataDark = thmPagNeo;
+
+    String themeKey = Provider.of<PagThemeProvider>(context).getThemeKey();
+    switch (themeKey) {
+      case 'vivid':
+        themeData = pagThemeVividLight;
+        themeDataDark = pagThemeVividDark;
+        break;
+      case 'minimal':
+        themeData = pagThemeMinimalLight;
+        themeDataDark = pagThemeMinimalDark;
+        break;
+      default:
+        // themeData = thmPagNeoLight;
+        // themeDataDark = thmPagNeo;
+        themeData = pagThemeMinimalLight;
+        themeDataDark = pagThemeMinimalDark;
+        break;
+    }
+
+    return Consumer<PagThemeProvider>(
+      builder: (context, PagThemeProvider themeNotifier, child) {
         return MaterialApp.router(
           routerConfig: _router,
           title: appTitle,
