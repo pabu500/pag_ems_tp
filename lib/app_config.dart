@@ -1,3 +1,4 @@
+import 'package:buff_helper/pag_helper/def/def_app.dart';
 import 'package:buff_helper/pag_helper/def/def_role.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_config.dart';
 import 'package:buff_helper/pag_helper/pag_project_repo.dart';
@@ -9,9 +10,11 @@ const String copyRightYear = '© 2023-2024';
 const bool loadDashboard = true;
 
 // use dev oresvc in release mode
-const bool useDevOresvc = true;
+// const bool useDevOresvc = true;
 // use dev usersvc in release mode
-const bool useDevUsersvc = true;
+// const bool useDevUsersvc = true;
+const DeploymentTeir oreSvcTargetTier = DeploymentTeir.dev;
+const DeploymentTeir userSvcTargetTier = DeploymentTeir.dev;
 
 // setting here is used to hard limit the scope of the portal
 // when deploying to different environment.
@@ -32,7 +35,9 @@ final MdlPagAppConfig pagAppConfig = MdlPagAppConfig(
   portalType: PagPortalType.emsTp,
   lazyLoadScope: 'site_group',
   loadDashboard: loadDashboard,
-  useDevOresvc: useDevOresvc,
-  useDevUsersvc: useDevUsersvc,
+  // useDevOresvc: useDevOresvc,
+  // useDevUsersvc: useDevUsersvc,
+  oreSvcEnv: oreSvcTargetTier.name,
+  userSvcEnv: userSvcTargetTier.name,
   activePortalPagProjectScopeList: activePortalPagProjectScopeList,
 );
