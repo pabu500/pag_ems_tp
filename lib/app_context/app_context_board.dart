@@ -19,6 +19,7 @@ import 'package:buff_helper/pag_helper/wgt/user/pg_splash.dart';
 import 'package:buff_helper/pag_helper/wgt/user/post_login.dart';
 import 'package:buff_helper/pag_helper/wgt/user/wgt_user_tenant_selector.dart';
 import 'package:buff_helper/pag_helper/wgt/wgt_pag.dart';
+import 'package:buff_helper/pag_helper/wgt/wgt_panel_container.dart';
 import 'package:buff_helper/pkg_buff_helper.dart';
 import 'package:buff_helper/xt_ui/wdgt/wgt_pag_wait.dart';
 import 'package:flutter/foundation.dart';
@@ -84,6 +85,8 @@ class _AppContextBoardState extends State<AppContextBoard>
   String _currentThemeKey = defaultThemeKey;
   late bool _isDarkMode =
       Provider.of<PagThemeProvider>(context, listen: false).isDark;
+
+  double _boardWidth = 0;
 
   Future<void> loadAppSetting() async {
     _userError = false;
@@ -253,6 +256,11 @@ class _AppContextBoardState extends State<AppContextBoard>
       print('app_home: loggedIn: $isLoggedIn, scopeReady: $scopeReady');
     }
 
+    _boardWidth = MediaQuery.of(context).size.width -
+        ((!_showLeftSideSlider || _leftSliderIsStack)
+            ? 30 + 5
+            : sliderWidth + 5);
+
     return !isLoggedIn
         ? FutureBuilder<void>(
             future: loadAppSetting(),
@@ -331,6 +339,7 @@ class _AppContextBoardState extends State<AppContextBoard>
     double scopeSliderHeightCap = 650.0;
     String appVer = Provider.of<PagAppProvider>(context).appVer ?? '';
     final bottomText = '$productName $appVer $copyRightYear $productOrgName';
+
     return Scaffold(
       // key: _scaffold,
       appBar: AppBar(
@@ -405,7 +414,24 @@ class _AppContextBoardState extends State<AppContextBoard>
                     // routeList: _currentAppContext.menuRouteList!,
                     // routeList2: _currentAppContext.routeList,
                   ),
-                getAppConextBoard(widget.pageRoute),
+                // getAppConextBoard(widget.pageRoute),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      horizontalSpaceTiny,
+                      Container(
+                        // full screen width
+                        // width: _boardWidth,
+                        width: _boardWidth,
+                        alignment: Alignment.topCenter,
+                        child: getAppConextBoard(widget.pageRoute),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             )),
           ),
