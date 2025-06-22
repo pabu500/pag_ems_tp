@@ -13,6 +13,7 @@ import 'package:buff_helper/pag_helper/model/scope/mdl_pag_scope_profile.dart';
 import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/vendor_helper.dart';
+import 'package:buff_helper/pag_helper/wgt/app_context_menu.dart';
 import 'package:buff_helper/pag_helper/wgt/scope/wgt_scope_selector3.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_splash.dart';
 import 'package:buff_helper/pag_helper/wgt/user/post_login.dart';
@@ -73,6 +74,8 @@ class _AppContextBoardState extends State<AppContextBoard>
   AnimationController? _rotationAnimationController;
   late Animation<double> _rotationAnimation;
 
+  bool _contextMenuIsStack = true;
+
   MdlPagTenant? _selectedTenant;
   bool _userError = false;
 
@@ -125,10 +128,11 @@ class _AppContextBoardState extends State<AppContextBoard>
   Future<MdlPagUser?> checkLoginStatus() async {
     DateTime now = DateTime.now();
 
-    String? username = await storage.read(
+    String? username = await secStorage.read(
       key: PagUserKey.identifier.toString(),
     );
-    String? password = await storage.read(key: PagUserKey.password.toString());
+    String? password =
+        await secStorage.read(key: PagUserKey.password.toString());
 
     if (username == null || password == null) {
       return null;
@@ -388,7 +392,22 @@ class _AppContextBoardState extends State<AppContextBoard>
             painter: NeoDotPatternPainter(
               color: Colors.grey.shade600.withAlpha(80),
             ),
-            child: Center(child: getAppConextBoard(widget.pageRoute)),
+            child: Center(
+                child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                if (_contextMenuIsStack)
+                  WgtAppContextMenu(
+                    loggedInUser: _loggedInUser!,
+                    width: sliderWidth,
+                    appContext: _currentAppContext,
+                    title: _currentAppContext.label,
+                    // routeList: _currentAppContext.menuRouteList!,
+                    // routeList2: _currentAppContext.routeList,
+                  ),
+                getAppConextBoard(widget.pageRoute),
+              ],
+            )),
           ),
         ),
       ),

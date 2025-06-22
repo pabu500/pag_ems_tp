@@ -9,7 +9,6 @@ import 'package:buff_helper/pag_helper/theme/theme_data_vivid.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_my_profile.dart';
 import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
-import 'package:buff_helper/up_helper/model/model_theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -217,7 +216,7 @@ final GoRouter _router = GoRouter(
       builder: (context, state) {
         Provider.of<PagAppProvider>(context, listen: false).prCur =
             PagPageRoute.myProfile;
-        return PgMyProfile(appConfig: pagAppConfig);
+        return PagPgMyProfile(appConfig: pagAppConfig);
       },
     ),
     GoRoute(
@@ -227,6 +226,14 @@ final GoRouter _router = GoRouter(
             PagPageRoute.consoleHomeDashboard;
         return const AppContextBoard(
             pageRoute: PagPageRoute.consoleHomeDashboard);
+      },
+    ),
+    GoRoute(
+      path: getRoute(PagPageRoute.meterManager),
+      builder: (context, state) {
+        Provider.of<PagAppProvider>(context, listen: false).prCur =
+            PagPageRoute.meterManager;
+        return const AppContextBoard(pageRoute: PagPageRoute.meterManager);
       },
     ),
     GoRoute(
