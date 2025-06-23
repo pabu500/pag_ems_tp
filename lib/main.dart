@@ -1,6 +1,7 @@
 import 'package:buff_helper/pag_helper/comm/comm_app.dart';
 import 'package:buff_helper/pag_helper/def/def_page_route.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
+import 'package:buff_helper/pag_helper/model/provider/pag_data_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_theme_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/pag_project_repo.dart';
@@ -75,12 +76,13 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (context) => PagAppProvider()),
         ChangeNotifierProvider(
-          create: (context) => PagThemeProvider(isDark: true),
+            create: (context) => PagThemeProvider(isDark: true)),
+        ChangeNotifierProvider(
+          create: (context) =>
+              PagUserProvider(firebaseUser: FirebaseAuth.instance.currentUser),
         ),
         ChangeNotifierProvider(
-          create: (context) => PagUserProvider(
-            firebaseUser: FirebaseAuth.instance.currentUser,
-          ),
+          create: (context) => PagDataProvider(),
         ),
       ],
       child: MainApp(
