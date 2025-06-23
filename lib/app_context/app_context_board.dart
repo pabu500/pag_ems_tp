@@ -405,15 +405,6 @@ class _AppContextBoardState extends State<AppContextBoard>
                 child: Stack(
               alignment: Alignment.topCenter,
               children: [
-                if (_contextMenuIsStack)
-                  WgtAppContextMenu(
-                    loggedInUser: _loggedInUser!,
-                    width: sliderWidth,
-                    appContext: _currentAppContext,
-                    title: _currentAppContext.label,
-                    // routeList: _currentAppContext.menuRouteList!,
-                    // routeList2: _currentAppContext.routeList,
-                  ),
                 // getAppConextBoard(widget.pageRoute),
                 Align(
                   alignment: Alignment.topCenter,
@@ -432,6 +423,15 @@ class _AppContextBoardState extends State<AppContextBoard>
                     ],
                   ),
                 ),
+                if (_contextMenuIsStack)
+                  WgtAppContextMenu(
+                    loggedInUser: _loggedInUser!,
+                    width: sliderWidth,
+                    appContext: _currentAppContext,
+                    title: _currentAppContext.label,
+                    // routeList: _currentAppContext.menuRouteList!,
+                    // routeList2: _currentAppContext.routeList,
+                  ),
               ],
             )),
           ),

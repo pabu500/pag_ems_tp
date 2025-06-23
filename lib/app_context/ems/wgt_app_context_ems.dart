@@ -29,6 +29,7 @@ class WgtAppContextEms extends StatelessWidget {
     switch (pageRoute) {
       case PagPageRoute.meterManager:
         return WgtMeterManagerHome(
+          selectedTenant: selectedTenant,
           pagAppContext: appCtxEms,
           height: height,
           width: width,
