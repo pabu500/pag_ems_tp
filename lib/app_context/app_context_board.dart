@@ -215,6 +215,7 @@ class _AppContextBoardState extends State<AppContextBoard>
         Provider.of<PagUserProvider>(context, listen: false).currentUser;
 
     _currentAppContext = getPageContext(widget.pageRoute);
+    _selectedTenant = _loggedInUser?.selectedTenant;
 
     pageTitle = getPageTitle(widget.pageRoute);
 
@@ -375,6 +376,9 @@ class _AppContextBoardState extends State<AppContextBoard>
               if (kDebugMode) {
                 print('Role: ${role.name}');
               }
+              _selectedTenant = null;
+              _loggedInUser!.updateSelectedTenant(_selectedTenant);
+
               setState(() {
                 _loggedInUser!.selectedRole = role;
                 _scopeSelectorKey = UniqueKey();
@@ -583,12 +587,18 @@ class _AppContextBoardState extends State<AppContextBoard>
                   key: _tenantRefreshKey,
                   appConfig: pagAppConfig,
                   loggedInUser: _loggedInUser!,
+                  initialTenant: _selectedTenant,
                   onTenantSelected: (tenant) {
                     if (kDebugMode) {
                       print('Tenant: ${tenant?.name}');
                     }
+                    if (tenant == null) {
+                      return;
+                    }
+
                     setState(() {
                       _selectedTenant = tenant;
+                      _loggedInUser!.updateSelectedTenant(_selectedTenant);
                       _contextRefreshKey = UniqueKey();
                     });
                   },
@@ -715,34 +725,41 @@ class _AppContextBoardState extends State<AppContextBoard>
     assert(_loggedInUser!.userScope != null);
     return WgtPagScopeSelector3(
       key: _scopeSelectorKey,
+      readOnly: true,
       iniScope: _loggedInUser!.selectedScope,
       projectList: _loggedInUser!.userScope!,
-      onChange: (
-        projectProfile,
-        siteGroupProfile,
-        siteProfile,
-        buildingProfile,
-        locatonGroupProfile,
-      ) async {
-        setState(() {
-          _loggedInUser!.selectedScope = MdlPagScopeProfile(
-            projectProfile: projectProfile,
-            siteGroupProfile: siteGroupProfile,
-            siteProfile: siteProfile,
-            buildingProfile: buildingProfile,
-            locationGroupProfile: locatonGroupProfile,
-          );
-          _activeScopeStr = _loggedInUser!.selectedScope.getEffectScopeStr();
-          if (kDebugMode) {
-            print('Active Scope: $_activeScopeStr');
-          }
+      onChange: true
+          ? null
+          : (
+              projectProfile,
+              siteGroupProfile,
+              siteProfile,
+              buildingProfile,
+              locatonGroupProfile,
+            ) async {
+              setState(() {
+                _loggedInUser!.selectedScope = MdlPagScopeProfile(
+                  projectProfile: projectProfile,
+                  siteGroupProfile: siteGroupProfile,
+                  siteProfile: siteProfile,
+                  buildingProfile: buildingProfile,
+                  locationGroupProfile: locatonGroupProfile,
+                );
+                _activeScopeStr =
+                    _loggedInUser!.selectedScope.getEffectScopeStr();
+                if (kDebugMode) {
+                  print('Active Scope: $_activeScopeStr');
+                }
 
-          _projectLogoKey = UniqueKey();
-          _scopeSelectorKey = UniqueKey();
-          _contextRefreshKey = UniqueKey();
-          _tenantRefreshKey = UniqueKey();
-        });
-      },
+                _selectedTenant = null;
+                _loggedInUser!.updateSelectedTenant(_selectedTenant);
+
+                _projectLogoKey = UniqueKey();
+                _scopeSelectorKey = UniqueKey();
+                _contextRefreshKey = UniqueKey();
+                _tenantRefreshKey = UniqueKey();
+              });
+            },
     );
   }
 
