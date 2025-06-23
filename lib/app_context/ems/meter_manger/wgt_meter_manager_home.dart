@@ -1,6 +1,8 @@
+import 'package:buff_helper/pag_helper/comm/comm_tenant.dart';
 import 'package:buff_helper/pag_helper/def/list_helper.dart';
 import 'package:buff_helper/pag_helper/def/pag_item_helper.dart';
 import 'package:buff_helper/pag_helper/def/scope_helper.dart';
+import 'package:buff_helper/pag_helper/model/acl/mdl_pag_svc_claim.dart';
 import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
@@ -48,14 +50,40 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
 
   Future<dynamic> _getTenantMeterList() async {
     if (widget.selectedTenant == null) {
-      return [];
+      return;
     }
 
+    Map<String, dynamic> queryMap = {
+      'scope': loggedInUser!.selectedScope.toScopeMap(),
+      'tenant_id': widget.selectedTenant!.id.toString(),
+      'tenant_name': widget.selectedTenant!.name,
+      'tenant_label': widget.selectedTenant!.label,
+    };
+
     try {
-      final result = await doGetTenantMeterList(queryMap);
-      final List<Map<String, dynamic>> meterList = result['meterList'] ?? [];
-      _tenantMeterInfoList.clear();
-      _tenantMeterInfoList.addAll(meterList);
+      final result = await doGetTenantMeterAssignment(
+        pagAppConfig,
+        queryMap,
+        MdlPagSvcClaim(
+          userId: loggedInUser!.id,
+          username: loggedInUser!.username,
+          scope: '',
+          target: '',
+          operation: 'read',
+        ),
+      );
+      final tenantMeterAssignment = result['tenant_meter_assignment'] ?? [];
+      if (tenantMeterAssignment.isNotEmpty) {
+        _tenantMeterInfoList.clear();
+        for (var meterGroup in tenantMeterAssignment) {
+          if (meterGroup['meter_info_list'] != null) {
+            final meterInfoList = meterGroup['meter_info_list'];
+            for (var meterInfo in meterInfoList) {
+              _tenantMeterInfoList.add(meterInfo);
+            }
+          }
+        }
+      }
     } catch (e) {
       if (kDebugMode) {
         print('Error fetching tenant meter list: $e');
@@ -78,12 +106,20 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
 
     _tabViewChildren = [];
 
-    _tabController =
-        TabController(length: _tabViewChildren.length, vsync: this);
+    // _tabController = TabController(length: _tabViewChildren.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController?.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    _tabController =
+        TabController(length: _tabViewChildren.length, vsync: this);
+
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     TextStyle? tabLabelStyle =
@@ -155,6 +191,8 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
                                   ),
                                 ];
                               });
+                              _tabController = TabController(
+                                  length: _tabViewChildren.length, vsync: this);
                             }
                           }),
                           builder: (context, snapshot) {
@@ -191,7 +229,7 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
   }
 
   Widget getCompletedWidget() {
-    if (_tenantMeterList.isEmpty) {
+    if (_tenantMeterInfoList.isEmpty) {
       return Center(
         child: Text(
           'No meters found for this tenant',
