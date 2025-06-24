@@ -7,7 +7,8 @@
         {
             "name": "ems_tp",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "args": ["--web-port", "8866"],
         },
         {
             "name": "ems_tp (profile mode)",
