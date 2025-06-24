@@ -18,9 +18,9 @@ dependencies:
   firebase_auth: ^5.3.4
   firebase_core: ^3.9.0
   buff_helper:
-    # path: ../pkg_pabuff_helper  
-    git:
-      url: https://github.com/pabu500/pkg_pabuff_helper.git
+    path: ../pkg_pabuff_helper  
+    # git:
+    #   url: https://github.com/pabu500/pkg_pabuff_helper.git
 
 dev_dependencies:
   flutter_test:

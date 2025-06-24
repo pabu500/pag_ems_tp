@@ -46,27 +46,36 @@ void main() async {
     throw Exception('Project profile not found');
   }
 
-  Map<String, dynamic> firebaseOptions =
-      portalScopeProfile['firebase_options'] ?? {};
-  if (firebaseOptions.isEmpty) {
-    throw Exception('Firebase options not found');
-  } else {
-    try {
-      final FirebaseOptions options = FirebaseOptions(
-        apiKey: firebaseOptions['apiKey'],
-        authDomain: firebaseOptions['authDomain'],
-        projectId: firebaseOptions['projectId'],
-        storageBucket: firebaseOptions['storageBucket'],
-        messagingSenderId: firebaseOptions['messagingSenderId'],
-        appId: firebaseOptions['appId'],
-      );
-      await Firebase.initializeApp(options: options);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Firebase.initializeApp error: $e');
-      }
-    }
-  }
+  // Map<String, dynamic> firebaseOptions =
+  //     portalScopeProfile['firebase_options'] ?? {};
+  // if (firebaseOptions.isEmpty) {
+  //   throw Exception('Firebase options not found');
+  // } else {
+  //   try {
+  //     final FirebaseOptions options = FirebaseOptions(
+  //       apiKey: firebaseOptions['apiKey'],
+  //       authDomain: firebaseOptions['authDomain'],
+  //       projectId: firebaseOptions['projectId'],
+  //       storageBucket: firebaseOptions['storageBucket'],
+  //       messagingSenderId: firebaseOptions['messagingSenderId'],
+  //       appId: firebaseOptions['appId'],
+  //     );
+  //     await Firebase.initializeApp(options: options);
+  //   } catch (e) {
+  //     if (kDebugMode) {
+  //       print('Firebase.initializeApp error: $e');
+  //     }
+  //   }
+  // }
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+        apiKey: "AIzaSyAjn0_qLuzQUTPTIt1ha5RQkyb4f8aF1ug",
+        authDomain: "energy-at-grid-aaa11.firebaseapp.com",
+        projectId: "energy-at-grid-aaa11",
+        storageBucket: "energy-at-grid-aaa11.firebasestorage.app",
+        messagingSenderId: "7880492032",
+        appId: "1:7880492032:web:b97c51002f63da634604e5"),
+  );
 
   await iniSharedPref();
 
