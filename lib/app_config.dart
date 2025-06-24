@@ -5,7 +5,7 @@ import 'package:buff_helper/pag_helper/pag_project_repo.dart';
 
 const String productName = 'Energy@Grid';
 const String productOrgName = 'Power Automation Pte Ltd';
-const String copyRightYear = '© 2023-2024';
+const String copyRightYear = '© 2023-2025';
 
 const bool loadDashboard = true;
 
