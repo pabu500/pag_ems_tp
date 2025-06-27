@@ -1,5 +1,5 @@
 import 'package:buff_helper/pag_helper/comm/comm_app.dart';
-import 'package:buff_helper/pag_helper/def/def_page_route.dart';
+import 'package:buff_helper/pag_helper/def_helper/def_page_route.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_data_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_theme_provider.dart';
@@ -185,10 +185,9 @@ final GoRouter _router = GoRouter(
       path: '/',
       builder: (context, state) {
         Provider.of<PagAppProvider>(context, listen: false).prCur =
-            PagPageRoute.consoleHomeDashboard;
+            PagPageRoute.billingManager;
 
-        return const AppContextBoard(
-            pageRoute: PagPageRoute.consoleHomeDashboard);
+        return const AppContextBoard(pageRoute: PagPageRoute.billingManager);
       },
     ),
     // GoRoute(

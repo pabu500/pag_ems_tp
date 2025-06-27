@@ -1,5 +1,5 @@
-import 'package:buff_helper/pag_helper/def/def_app.dart';
-import 'package:buff_helper/pag_helper/def/def_role.dart';
+import 'package:buff_helper/pag_helper/def_helper/def_app.dart';
+import 'package:buff_helper/pag_helper/def_helper/def_role.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_config.dart';
 import 'package:buff_helper/pag_helper/pag_project_repo.dart';
 
