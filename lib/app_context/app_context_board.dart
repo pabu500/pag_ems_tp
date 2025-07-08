@@ -344,6 +344,7 @@ class _AppContextBoardState extends State<AppContextBoard>
       // key: _scaffold,
       appBar: AppBar(
         centerTitle: true,
+        toolbarHeight: 70,
         title: buildTitleWidget(),
         leading: Builder(
           builder: (BuildContext context) {
@@ -560,7 +561,7 @@ class _AppContextBoardState extends State<AppContextBoard>
       offset: const Offset(-80, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           widget.icon ?? const SizedBox(),
           getScopeSelector(),

@@ -873,7 +873,7 @@ class _WgtEbBillTenantState extends State<WgtEbBillTenant> {
                                   const DataColumn(
                                       // columnWidth: FlexColumnWidth(),
                                       label: Expanded(
-                                    child: Text('PDF'),
+                                    child: Text('Invoice'),
                                   )),
                                   if (_isAdmin)
                                     //_isAdmin
