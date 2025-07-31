@@ -13,8 +13,8 @@ const bool loadDashboard = true;
 // const bool useDevOresvc = true;
 // use dev usersvc in release mode
 // const bool useDevUsersvc = true;
-const DeploymentTeir oreSvcTargetTier = DeploymentTeir.dev;
-const DeploymentTeir userSvcTargetTier = DeploymentTeir.dev;
+const DeploymentTeir oreSvcTargetTier = DeploymentTeir.test;
+const DeploymentTeir userSvcTargetTier = DeploymentTeir.test;
 
 // setting here is used to hard limit the scope of the portal
 // when deploying to different environment.
