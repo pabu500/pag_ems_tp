@@ -39,7 +39,7 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
   late final MdlPagUser? loggedInUser;
 
   TabController? _tabController;
-  late List<Widget> _tabViewChildren = [];
+  List<Widget> _tabViewChildren = [];
 
   final List<Map<String, dynamic>> _tenantMeterInfoList = [];
 
@@ -106,7 +106,7 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
 
     _tabViewChildren = [];
 
-    // _tabController = TabController(length: _tabViewChildren.length, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -117,8 +117,7 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
 
   @override
   Widget build(BuildContext context) {
-    _tabController =
-        TabController(length: _tabViewChildren.length, vsync: this);
+    // _tabController = TabController(length: _tabViewChildren.length, vsync: this);
 
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;

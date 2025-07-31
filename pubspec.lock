@@ -62,7 +62,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "6150ca7a22496863aab0c7fb78aeb8229e12b47f"
+      resolved-ref: "7c4ebd142e13292026a2eeac125ccfb3fd7f2247"
       url: "https://github.com/pabu500/pkg_pabuff_helper.git"
     source: git
     version: "2.18.3"
