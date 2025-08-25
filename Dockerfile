@@ -5,6 +5,11 @@ RUN apt-get update
 RUN apt-get install -y bash curl file git unzip xz-utils zip libglu1-mesa
 RUN apt-get clean
 
+RUN apt-get update
+RUN apt-get install -y software-properties-common
+RUN apt-add-repository ppa:git-core/ppa
+RUN apt-get install -y git
+
 # Clone the flutter repo
 RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
 
