@@ -148,7 +148,7 @@ class _AppContextBoardState extends State<AppContextBoard>
             PagUserKey.password.name: password,
             PagUserKey.email.name: '',
             'portal_type_name': PagPortalType.emsTp.name,
-            'portal_type_label': PagPortalType.emsTp.label,
+            // 'portal_type_label': PagPortalType.emsTp.label,
           }),
         );
 
