@@ -17,6 +17,7 @@ import 'package:buff_helper/pag_helper/wgt/app_context_menu.dart';
 import 'package:buff_helper/pag_helper/wgt/scope/wgt_scope_selector3.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_splash.dart';
 import 'package:buff_helper/pag_helper/wgt/user/post_login.dart';
+import 'package:buff_helper/pag_helper/wgt/user/wgt_update_password.dart';
 import 'package:buff_helper/pag_helper/wgt/user/wgt_user_tenant_selector.dart';
 import 'package:buff_helper/pag_helper/wgt/wgt_pag.dart';
 import 'package:buff_helper/pkg_buff_helper.dart';
@@ -340,212 +341,263 @@ class _AppContextBoardState extends State<AppContextBoard>
     String appVer = Provider.of<PagAppProvider>(context).appVer ?? '';
     final bottomText = '$productName $appVer $copyRightYear $productOrgName';
 
-    return Scaffold(
-      // key: _scaffold,
-      appBar: AppBar(
-        centerTitle: true,
-        toolbarHeight: 70,
-        title: buildTitleWidget(),
-        leading: Builder(
-          builder: (BuildContext context) {
-            return InkWell(
-              onTap: true
-                  // _loadingPagAppContext
-                  ? null
-                  : () {
-                      Scaffold.of(context).openDrawer();
-                    },
-              child: WgtPaG(
-                conextLabel: pageTitle, //_currentAppContext.label,
-                size: 35,
-                colorA: getColor(context: context, pagWgt: PagWgt.pagCube),
-                colorC: _currentAppContext.appContextType ==
-                        PagAppContextType.consoleHome
-                    ? null
-                    : pag3,
-              ),
-            );
-          },
-        ),
-        leadingWidth: 230,
-        actions: [
-          UserMenu(
-            appConfig: pagAppConfig,
-            showTheme: false,
-            onRoleSelected: (MdlPagRole role) {
-              if (kDebugMode) {
-                print('Role: ${role.name}');
-              }
-              _selectedTenant = null;
-              _loggedInUser!.updateSelectedTenant(_selectedTenant);
-
-              setState(() {
-                _loggedInUser!.selectedRole = role;
-                _scopeSelectorKey = UniqueKey();
-                _contextRefreshKey = UniqueKey();
-                _tenantRefreshKey = UniqueKey();
-              });
-            },
-          )
-        ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(ribbonHeight),
-          child: Column(children: [getAppContextRibbon(), getNoticeRibbon()]),
-        ),
-      ),
-      drawer: WgtAppContextDrawer(
-        loggedInUser: _loggedInUser!,
-        appContext: _currentAppContext,
-        title: _currentAppContext.label,
-        // routeList: _currentAppContext.menuRouteList!,
-      ),
-      body: SafeArea(
-        child: Center(
-          child: CustomPaint(
-            painter: NeoDotPatternPainter(
-              color: Colors.grey.shade600.withAlpha(80),
-            ),
-            child: Center(
-                child: Stack(
-              alignment: Alignment.topCenter,
+    return (_loggedInUser!.resetPasswordToken == 'flag_reset')
+        ? Material(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                // getAppConextBoard(widget.pageRoute),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      horizontalSpaceTiny,
-                      Container(
-                        // full screen width
-                        // width: _boardWidth,
-                        width: _boardWidth,
-                        alignment: Alignment.topCenter,
-                        child: getAppConextBoard(widget.pageRoute),
+                verticalSpaceSmall,
+                Text(
+                  'Reset Password',
+                  style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).hintColor),
+                ),
+                verticalSpaceSmall,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: 250,
+                      width: 360,
+                      decoration: BoxDecoration(
+                        border: Border.all(
+                          color: Theme.of(context).hintColor.withAlpha(55),
+                          width: 0.5,
+                        ),
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                    ],
-                  ),
-                ),
-                if (_contextMenuIsStack)
-                  WgtAppContextMenu(
-                    loggedInUser: _loggedInUser!,
-                    width: sliderWidth,
-                    appContext: _currentAppContext,
-                    title: _currentAppContext.label,
-                    // routeList: _currentAppContext.menuRouteList!,
-                    // routeList2: _currentAppContext.routeList,
-                  ),
-              ],
-            )),
-          ),
-        ),
-      ),
-      bottomNavigationBar: SizedBox(
-        height: 13,
-        child: Text(
-          bottomText,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        mini: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        shape: RoundedRectangleBorder(
-          side: BorderSide(
-            color: Theme.of(context).hintColor.withAlpha(50),
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(8),
-        ),
-        onPressed: () {
-          // updateLayout() {
-          //   setState(() {
-          //     _boardToReset = widget.pageRoute;
-          //     // _contextRefreshKey = UniqueKey();
-          //     _layoutRefreshKey = UniqueKey();
-          //   });
-          // }
-
-          updateTheme() {
-            setState(() {
-              // _boardToReset = widget.pageRoute;
-              _themeRefreshKey = UniqueKey();
-            });
-          }
-
-          //find bottom right position
-          RenderBox renderBox = context.findRenderObject() as RenderBox;
-          Offset offset = renderBox.localToGlobal(Offset.zero);
-          double bottom = offset.dy + renderBox.size.height;
-          double right = offset.dx + renderBox.size.width;
-          RelativeRect position = RelativeRect.fromLTRB(right, bottom, 0, 0);
-          showMenu(
-            context: context,
-            position: position,
-            items: [
-              PopupMenuItem<int>(
-                value: 2,
-                // onTap: null,
-                enabled: false,
-                child: StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                    return getThemeSelector(context, setState, updateTheme);
-                  },
-                ),
-              ),
-              PopupMenuItem<int>(
-                value: 1,
-                enabled: false,
-                child: StatefulBuilder(builder: (context, setState) {
-                  return getModeSelector(context, setState);
-                }),
-              ),
-              PopupMenuItem<int>(
-                value: 0,
-                child: StatefulBuilder(builder: (context, setState) {
-                  // wrap the menu item with StatefulBuilder so that
-                  // we can update the state of the parent widget
-                  // and theme color of the menu will update when theme changes
-                  return ListTile(
-                    leading: Icon(
-                      Symbols.reset_focus,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withAlpha(130),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 13, horizontal: 8),
+                      child: WgtPagUpdatePassword(
+                        appConfig: pagAppConfig,
+                        width: 360,
+                        padding: EdgeInsets.zero,
+                        showUsername: false,
+                        showBorder: false,
+                        sideExpanded: false,
+                        loggedInUser: _loggedInUser!,
+                        changeTargetUserId: _loggedInUser!.id!,
+                        updatePassword: doUpdateUserKeyValue,
+                      ),
                     ),
-                    title: Text("Reset Panel Positions",
-                        style: TextStyle(
+                  ],
+                ),
+              ],
+            ),
+          )
+        : Scaffold(
+            // key: _scaffold,
+            appBar: AppBar(
+              centerTitle: true,
+              toolbarHeight: 70,
+              title: buildTitleWidget(),
+              leading: Builder(
+                builder: (BuildContext context) {
+                  return InkWell(
+                    onTap: true
+                        // _loadingPagAppContext
+                        ? null
+                        : () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                    child: WgtPaG(
+                      conextLabel: pageTitle, //_currentAppContext.label,
+                      size: 35,
+                      colorA:
+                          getColor(context: context, pagWgt: PagWgt.pagCube),
+                      colorC: _currentAppContext.appContextType ==
+                              PagAppContextType.consoleHome
+                          ? null
+                          : pag3,
+                    ),
+                  );
+                },
+              ),
+              leadingWidth: 230,
+              actions: [
+                UserMenu(
+                  appConfig: pagAppConfig,
+                  showTheme: false,
+                  onRoleSelected: (MdlPagRole role) {
+                    if (kDebugMode) {
+                      print('Role: ${role.name}');
+                    }
+                    _selectedTenant = null;
+                    _loggedInUser!.updateSelectedTenant(_selectedTenant);
+
+                    setState(() {
+                      _loggedInUser!.selectedRole = role;
+                      _scopeSelectorKey = UniqueKey();
+                      _contextRefreshKey = UniqueKey();
+                      _tenantRefreshKey = UniqueKey();
+                    });
+                  },
+                )
+              ],
+              bottom: PreferredSize(
+                preferredSize: Size.fromHeight(ribbonHeight),
+                child: Column(
+                    children: [getAppContextRibbon(), getNoticeRibbon()]),
+              ),
+            ),
+            drawer: WgtAppContextDrawer(
+              loggedInUser: _loggedInUser!,
+              appContext: _currentAppContext,
+              title: _currentAppContext.label,
+              // routeList: _currentAppContext.menuRouteList!,
+            ),
+            body: SafeArea(
+              child: Center(
+                child: CustomPaint(
+                  painter: NeoDotPatternPainter(
+                    color: Colors.grey.shade600.withAlpha(80),
+                  ),
+                  child: Center(
+                      child: Stack(
+                    alignment: Alignment.topCenter,
+                    children: [
+                      // getAppConextBoard(widget.pageRoute),
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            horizontalSpaceTiny,
+                            Container(
+                              // full screen width
+                              // width: _boardWidth,
+                              width: _boardWidth,
+                              alignment: Alignment.topCenter,
+                              child: getAppConextBoard(widget.pageRoute),
+                            ),
+                          ],
+                        ),
+                      ),
+                      if (_contextMenuIsStack)
+                        WgtAppContextMenu(
+                          loggedInUser: _loggedInUser!,
+                          width: sliderWidth,
+                          appContext: _currentAppContext,
+                          title: _currentAppContext.label,
+                          // routeList: _currentAppContext.menuRouteList!,
+                          // routeList2: _currentAppContext.routeList,
+                        ),
+                    ],
+                  )),
+                ),
+              ),
+            ),
+            bottomNavigationBar: SizedBox(
+              height: 13,
+              child: Text(
+                bottomText,
+                textAlign: TextAlign.center,
+                style:
+                    TextStyle(fontSize: 12, color: Theme.of(context).hintColor),
+              ),
+            ),
+            floatingActionButton: FloatingActionButton(
+              mini: true,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: Theme.of(context).hintColor.withAlpha(50),
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              onPressed: () {
+                // updateLayout() {
+                //   setState(() {
+                //     _boardToReset = widget.pageRoute;
+                //     // _contextRefreshKey = UniqueKey();
+                //     _layoutRefreshKey = UniqueKey();
+                //   });
+                // }
+
+                updateTheme() {
+                  setState(() {
+                    // _boardToReset = widget.pageRoute;
+                    _themeRefreshKey = UniqueKey();
+                  });
+                }
+
+                //find bottom right position
+                RenderBox renderBox = context.findRenderObject() as RenderBox;
+                Offset offset = renderBox.localToGlobal(Offset.zero);
+                double bottom = offset.dy + renderBox.size.height;
+                double right = offset.dx + renderBox.size.width;
+                RelativeRect position =
+                    RelativeRect.fromLTRB(right, bottom, 0, 0);
+                showMenu(
+                  context: context,
+                  position: position,
+                  items: [
+                    PopupMenuItem<int>(
+                      value: 2,
+                      // onTap: null,
+                      enabled: false,
+                      child: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                          return getThemeSelector(
+                              context, setState, updateTheme);
+                        },
+                      ),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 1,
+                      enabled: false,
+                      child: StatefulBuilder(builder: (context, setState) {
+                        return getModeSelector(context, setState);
+                      }),
+                    ),
+                    PopupMenuItem<int>(
+                      value: 0,
+                      child: StatefulBuilder(builder: (context, setState) {
+                        // wrap the menu item with StatefulBuilder so that
+                        // we can update the state of the parent widget
+                        // and theme color of the menu will update when theme changes
+                        return ListTile(
+                          leading: Icon(
+                            Symbols.reset_focus,
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withAlpha(130))),
-                    onTap: () {
-                      _resetPanelPositions();
-                      context.pop();
-                    },
-                  );
-                }),
+                                .withAlpha(130),
+                          ),
+                          title: Text("Reset Panel Positions",
+                              style: TextStyle(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurface
+                                      .withAlpha(130))),
+                          onTap: () {
+                            _resetPanelPositions();
+                            context.pop();
+                          },
+                        );
+                      }),
+                    ),
+                  ],
+                  elevation: 8.0,
+                ).then((value) {
+                  if (value != null) {
+                    if (kDebugMode) {
+                      print("You selected: $value");
+                    }
+                  }
+                });
+              },
+              child: Icon(
+                Symbols.settings,
+                size: 21,
+                color: Theme.of(context).colorScheme.onSurface.withAlpha(80),
               ),
-            ],
-            elevation: 8.0,
-          ).then((value) {
-            if (value != null) {
-              if (kDebugMode) {
-                print("You selected: $value");
-              }
-            }
-          });
-        },
-        child: Icon(
-          Symbols.settings,
-          size: 21,
-          color: Theme.of(context).colorScheme.onSurface.withAlpha(80),
-        ),
-      ),
-    );
+            ),
+          );
   }
 
   Widget buildTitleWidget() {

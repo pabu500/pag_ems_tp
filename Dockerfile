@@ -18,7 +18,7 @@ RUN git clone https://github.com/flutter/flutter.git /usr/local/flutter
 ENV PATH="/usr/local/flutter/bin:/usr/local/flutter/bin/cache/dart-sdk/bin:${PATH}"
 
 # Change stable channel
-RUN flutter channel stable
+RUN flutter channel beta
 
 # Enable web capabilities
 RUN flutter config --enable-web
