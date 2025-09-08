@@ -153,10 +153,14 @@ class _PgProjectPublicFrontState extends State<PgProjectPublicFront> {
       ),
       bottomNavigationBar: SizedBox(
         height: 13,
-        child: Text(
-          bottomText,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor),
+        child: Tooltip(
+          waitDuration: const Duration(milliseconds: 500),
+          message: pagAppConfig.oreSvcEnv,
+          child: Text(
+            bottomText,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor),
+          ),
         ),
       ),
     );
