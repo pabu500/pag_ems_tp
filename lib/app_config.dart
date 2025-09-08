@@ -26,7 +26,7 @@ const List<PagPortalProjectScope> activePortalPagProjectScopeList = [
 ];
 
 MdlPagAppConfig pagAppConfig = MdlPagAppConfig(
-  portalType: PagPortalType.pgEmsTp,
+  portalType: PagPortalType.pagEmsTp,
   lazyLoadScope: '',
   loadDashboard: loadDashboard,
   userSvcEnv: DeploymentTeir.unset.name,
@@ -38,7 +38,7 @@ Future<void> initializeAppConfig() async {
   dev.log('Initializing App Config for ${pagAppConfig.portalType}');
   if (kDebugMode) {
     pagAppConfig = MdlPagAppConfig(
-      portalType: PagPortalType.pgEmsTp,
+      portalType: PagPortalType.pagEmsTp,
       lazyLoadScope: '',
       loadDashboard: loadDashboard,
       userSvcEnv: DeploymentTeir.dev.name,
@@ -55,7 +55,7 @@ Future<void> initializeAppConfig() async {
       // print('App Config Data: ${data['oreSvcTargetTier']} ${data['userSvcTargetTier']}');
 
       pagAppConfig = MdlPagAppConfig(
-        portalType: PagPortalType.pgEmsTp,
+        portalType: PagPortalType.pagEmsTp,
         lazyLoadScope: '',
         loadDashboard: loadDashboard,
         userSvcEnv: data['userSvcTargetTier'] ?? DeploymentTeir.unset.name,

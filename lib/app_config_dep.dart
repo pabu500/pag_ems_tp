@@ -32,7 +32,7 @@ const List<PagPortalProjectScope> activePortalPagProjectScopeList = [
 ];
 
 final MdlPagAppConfig pagAppConfig = MdlPagAppConfig(
-  portalType: PagPortalType.pgEmsTp,
+  portalType: PagPortalType.pagEmsTp,
   lazyLoadScope: 'site_group',
   loadDashboard: loadDashboard,
   // useDevOresvc: useDevOresvc,
