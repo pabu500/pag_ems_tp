@@ -7,7 +7,7 @@ import 'package:buff_helper/pag_helper/wgt/user/wgt_login.dart';
 import 'package:buff_helper/xt_ui/painter/pag_bg_painter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:pag_ems_tp/app_config.dart';
+import 'package:pag_ems_tp/app_config_dep.dart';
 import 'package:provider/provider.dart';
 
 class PgLogin extends StatefulWidget {

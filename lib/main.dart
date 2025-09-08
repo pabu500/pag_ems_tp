@@ -1,4 +1,5 @@
 import 'package:buff_helper/pag_helper/comm/comm_app.dart';
+import 'package:buff_helper/pag_helper/def_helper/def_app.dart';
 import 'package:buff_helper/pag_helper/def_helper/def_page_route.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_data_provider.dart';
@@ -8,6 +9,7 @@ import 'package:buff_helper/pag_helper/pag_project_repo.dart';
 import 'package:buff_helper/pag_helper/theme/theme_data_minimal.dart';
 import 'package:buff_helper/pag_helper/theme/theme_data_vivid.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
+import 'package:buff_helper/pag_helper/wgt/pg_portal_maint.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_my_profile.dart';
 import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -22,6 +24,7 @@ import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:pag_ems_tp/user_service/pg_login.dart';
 import 'package:provider/provider.dart';
+import 'dart:developer' as dev;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +35,52 @@ void main() async {
   // String packageName = packageInfo.packageName;
   String version = packageInfo.version;
   // String buildNumber = packageInfo.buildNumber;
+
+  try {
+    await initializeAppConfig();
+  } catch (e) {
+    print('Error initializing app config: $e');
+    runApp(const MaterialApp(
+      home: PgPortalMaint(),
+      debugShowCheckedModeBanner: false,
+    ));
+    return;
+  }
+
+  if (pagAppConfig.userSvcEnv == DeploymentTeir.unset.name ||
+      pagAppConfig.oreSvcEnv == DeploymentTeir.unset.name) {
+    dev.log(
+        'UserSvc or OreSvc environment is not set. Please set the environment before running the app.');
+
+    runApp(const MaterialApp(
+      home: PgPortalMaint(),
+      debugShowCheckedModeBanner: false,
+    ));
+    return;
+  }
+
+  try {
+    final result = await getPortalTargetStatus(pagAppConfig);
+    final portalStatus = result['target_status'] ?? 'normal';
+    if (portalStatus == 'maintenance' || portalStatus == 'maint') {
+      dev.log('Portal is under maintenance');
+
+      // Show a maintenance page or message
+      runApp(const MaterialApp(
+        home: PgPortalMaint(),
+        debugShowCheckedModeBanner: false,
+      ));
+      return;
+    }
+  } catch (e) {
+    dev.log('Error getting portal status: $e');
+
+    runApp(const MaterialApp(
+      home: PgPortalMaint(),
+      debugShowCheckedModeBanner: false,
+    ));
+    return;
+  }
 
   String latestVersion = await getVersion2(appName, pagAppConfig);
   String oreVersion = await getOreVersion2(null, pagAppConfig);
