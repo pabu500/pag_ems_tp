@@ -4,8 +4,8 @@ import 'package:buff_helper/xt_ui/xt_ui.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:pag_ems_tp/app_config.dart';
 import 'package:provider/provider.dart';
-import 'app_config_dep.dart';
 
 class PgProjectPublicFront extends StatefulWidget {
   const PgProjectPublicFront({super.key, this.isSplash = false});

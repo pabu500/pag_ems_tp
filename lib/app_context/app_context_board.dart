@@ -31,7 +31,7 @@ import 'package:buff_helper/pag_helper/wgt/app/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:buff_helper/pag_helper/wgt/user/user_menu.dart';
 import 'package:provider/provider.dart';
-import '../app_config_dep.dart';
+import '../app_config.dart';
 
 class AppContextBoard extends StatefulWidget {
   const AppContextBoard({super.key, required this.pageRoute, this.icon});
