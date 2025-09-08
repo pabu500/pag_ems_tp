@@ -54,6 +54,8 @@ FROM nginx:alpine AS runner
 # COPY package.json /usr/share/nginx/html
 COPY --from=builder /app/build/web /usr/share/nginx/html
 
+COPY ./nginx/nginx.conf.template /etc/nginx/conf.d/default.conf.template
+
 # Substitute environment variables in nginx config template
 CMD envsubst '$ORE_SVC_TARGET_TIER $USER_SVC_TARGET_TIER $MY_ENV' \
     < /etc/nginx/conf.d/default.conf.template \
