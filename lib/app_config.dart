@@ -54,12 +54,19 @@ Future<void> initializeAppConfig() async {
 
       // print('App Config Data: ${data['oreSvcTargetTier']} ${data['userSvcTargetTier']}');
 
+      String userSvcEnv = (data['userSvcTargetTier'] ?? '').isEmpty
+          ? DeploymentTeir.unset.name
+          : data['userSvcTargetTier'];
+      String oreSvcEnv = (data['oreSvcTargetTier'] ?? '').isEmpty
+          ? DeploymentTeir.unset.name
+          : data['oreSvcTargetTier'];
+
       pagAppConfig = MdlPagAppConfig(
         portalType: PagPortalType.pagEmsTp,
         lazyLoadScope: '',
         loadDashboard: loadDashboard,
-        userSvcEnv: data['userSvcTargetTier'] ?? DeploymentTeir.unset.name,
-        oreSvcEnv: data['oreSvcTargetTier'] ?? DeploymentTeir.unset.name,
+        userSvcEnv: userSvcEnv,
+        oreSvcEnv: oreSvcEnv,
         activePortalPagProjectScopeList: activePortalPagProjectScopeList,
       );
     } else {
