@@ -45,6 +45,8 @@ Future<void> initializeAppConfig() async {
       oreSvcEnv: DeploymentTeir.dev.name,
       activePortalPagProjectScopeList: activePortalPagProjectScopeList,
     );
+    print(
+        'App Config (Debug): ${pagAppConfig.userSvcEnv} ${pagAppConfig.oreSvcEnv}');
   } else {
     String url = web.window.location.origin;
     final response = await http.post(Uri.parse('$url/app_config'));
@@ -69,6 +71,7 @@ Future<void> initializeAppConfig() async {
         oreSvcEnv: oreSvcEnv,
         activePortalPagProjectScopeList: activePortalPagProjectScopeList,
       );
+      print('App Config: ${pagAppConfig.userSvcEnv} ${pagAppConfig.oreSvcEnv}');
     } else {
       print('response.body: ${response.body}');
       throw Exception('Failed to load config');
