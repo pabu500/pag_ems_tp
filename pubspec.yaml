@@ -1,7 +1,7 @@
 name: pag_ems_tp
 description: "Energy@Grid EMS Tenant Portal"
 publish_to: 'none'
-version: 0.7.17
+version: 0.8.0
 environment:
   sdk: '>=3.6.0'
 
@@ -14,14 +14,16 @@ dependencies:
   go_router: ^16.1.0  
   package_info_plus: ^8.1.2
   material_symbols_icons: ^4.2815.1
-  firebase_auth: ^5.3.4
-  firebase_core: ^3.9.0
+  # firebase_auth: ^5.3.4
+  firebase_auth: ^6.5.1
+  # firebase_core: ^3.9.0
+  firebase_core: ^4.9.0
   web: ^1.1.1
 
   buff_helper:
-    # path: ../pkg_pabuff_helper  
-    git:
-      url: https://github.com/pabu500/pkg_pabuff_helper.git
+    path: ../pkg_pabuff_helper  
+    # git:
+    #   url: https://github.com/pabu500/pkg_pabuff_helper.git
 
 dev_dependencies:
   flutter_test:

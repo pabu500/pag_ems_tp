@@ -1,10 +1,14 @@
+import 'package:buff_helper/pag_helper/def_helper/list_helper.dart';
+import 'package:buff_helper/pag_helper/def_helper/pag_item_helper.dart';
 import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
+import 'package:buff_helper/pag_helper/wgt/ls/wgt_pag_ls.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app_config.dart';
 import 'wgt_eb_bill.dart';
 
 class WgtBillingManagerHome extends StatefulWidget {
@@ -28,6 +32,8 @@ class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
   TabController? _tabController;
   late final List<Widget> _tabViewChildren;
 
+  bool _showBillLs = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,7 +43,25 @@ class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
     loggedInUser =
         Provider.of<PagUserProvider>(context, listen: false).currentUser;
 
+    if (widget.selectedTenant != null) {
+      _showBillLs = true;
+    }
+
     _tabViewChildren = [
+      if (_showBillLs)
+        WgtPagLs(
+          appConfig: pagAppConfig,
+          pagAppContext: widget.pagAppContext,
+          itemKind: PagItemKind.bill,
+          listContextType: PagListContextType.infoTp,
+          initialFilterMap: {
+            'tenant_id': widget.selectedTenant?.id,
+            'tenant_name': widget.selectedTenant?.name,
+            'tenant_label': widget.selectedTenant?.label,
+            'tenant_account_number': widget.selectedTenant?.accountNumber,
+            // 'lc_status': 'Rl',
+          },
+        ),
       WgtEbBillTenant(
         // tenantIdStr: '123',
         // tenenatName: 'tenant-1', //'admin'
@@ -66,6 +90,8 @@ class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
             unselectedLabelColor: Theme.of(context).hintColor,
             dividerColor: Theme.of(context).colorScheme.surface,
             tabs: [
+              if (_showBillLs)
+                Tab(child: Text('List/Search Bill', style: tabLabelStyle)),
               Tab(child: Text('EB Bill', style: tabLabelStyle)),
             ],
             onTap: (index) {},

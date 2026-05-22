@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer' as dev;
 import 'package:buff_helper/pag_helper/pag_app_context_list.dart';
 import 'package:buff_helper/pag_helper/comm/comm_user_service.dart';
 import 'package:buff_helper/pag_helper/def_helper/def_page_route.dart';
@@ -105,15 +106,14 @@ class _AppContextBoardState extends State<AppContextBoard>
         }
       }
     } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
+      dev.log(e.toString());
+
       _userError = true;
     } finally {
       _isLoggingIn = false;
-      if (kDebugMode) {
-        print('loadAppSetting done');
-      }
+
+      dev.log('loadAppSetting done');
+
       if (_loggedInUser == null) {
         if (mounted) {
           context.go(getRoute(PagPageRoute.projectPublicFront));
@@ -166,9 +166,7 @@ class _AppContextBoardState extends State<AppContextBoard>
 
         return user;
       } catch (e) {
-        if (kDebugMode) {
-          print(e);
-        }
+        dev.log(e.toString());
         return null;
       }
     }
@@ -185,9 +183,7 @@ class _AppContextBoardState extends State<AppContextBoard>
 
   PagPageRoute? _boardToReset;
   void _resetPanelPositions() {
-    if (kDebugMode) {
-      print('Reset Panel Positions');
-    }
+    dev.log('Reset Panel Positions');
     setState(() {
       _boardToReset = widget.pageRoute;
       _contextRefreshKey = UniqueKey();
@@ -235,9 +231,7 @@ class _AppContextBoardState extends State<AppContextBoard>
 
   @override
   Widget build(BuildContext context) {
-    if (kDebugMode) {
-      print('AppContextBoard.build()');
-    }
+    dev.log('AppContextBoard.build()');
 
     bool isLoggedIn = false;
     if (_loggedInUser != null) {
@@ -253,9 +247,7 @@ class _AppContextBoardState extends State<AppContextBoard>
       }
     }
 
-    if (kDebugMode) {
-      print('app_home: loggedIn: $isLoggedIn, scopeReady: $scopeReady');
-    }
+    dev.log('app_home: loggedIn: $isLoggedIn, scopeReady: $scopeReady');
 
     _boardWidth = MediaQuery.of(context).size.width -
         ((!_showLeftSideSlider || _leftSliderIsStack)
@@ -268,10 +260,8 @@ class _AppContextBoardState extends State<AppContextBoard>
             builder: (context, AsyncSnapshot<void> snapshot) {
               switch (snapshot.connectionState) {
                 case ConnectionState.waiting:
-                  if (kDebugMode) {
-                    print(
-                        'snapshot.connectionState: ${snapshot.connectionState}');
-                  }
+                  dev.log(
+                      'snapshot.connectionState: ${snapshot.connectionState}');
                   return PgSplash(
                       appConfig: pagAppConfig,
                       // appCtxBoardContext: context,
@@ -279,9 +269,7 @@ class _AppContextBoardState extends State<AppContextBoard>
                       doPostLogin: _loggedInUser != null);
                 default:
                   if (snapshot.hasError) {
-                    if (kDebugMode) {
-                      print(snapshot.error);
-                    }
+                    dev.log(snapshot.error.toString());
                     return PgTechIssue();
                     // homeBoard(
                     //   'Error',
@@ -292,14 +280,10 @@ class _AppContextBoardState extends State<AppContextBoard>
                     // );
                   } else {
                     if (_loggedInUser == null || _loggedInUser!.isEmpty) {
-                      if (kDebugMode) {
-                        print('No user');
-                      }
+                      dev.log('No user');
                       return const PgProjectPublicFront();
                     } else {
-                      if (kDebugMode) {
-                        print('User: ${_loggedInUser!.username}');
-                      }
+                      dev.log('User: ${_loggedInUser!.username}');
 
                       return
                           // completedWidget();
@@ -421,9 +405,7 @@ class _AppContextBoardState extends State<AppContextBoard>
                   appConfig: pagAppConfig,
                   showTheme: false,
                   onRoleSelected: (MdlPagRole role) {
-                    if (kDebugMode) {
-                      print('Role: ${role.name}');
-                    }
+                    dev.log('Role: ${role.name}');
                     _selectedTenant = null;
                     _loggedInUser!.updateSelectedTenant(_selectedTenant);
 
@@ -589,9 +571,7 @@ class _AppContextBoardState extends State<AppContextBoard>
                   elevation: 8.0,
                 ).then((value) {
                   if (value != null) {
-                    if (kDebugMode) {
-                      print("You selected: $value");
-                    }
+                    dev.log("You selected: $value");
                   }
                 });
               },
@@ -608,9 +588,7 @@ class _AppContextBoardState extends State<AppContextBoard>
     if (_loggedInUser == null || _loggedInUser!.isEmpty) {
       return const SizedBox();
     }
-    if (kDebugMode) {
-      print('buildTitleWidget: ${_currentAppContext.name}');
-    }
+    dev.log('buildTitleWidget: ${_currentAppContext.name}');
     // int projectCount = _loggedInUser!.getProjectProfileList().length;
     // int siteCount = _loggedInUser!.selectedProjectProfile!.getTotalSiteCount();
     return Transform.translate(
@@ -645,9 +623,7 @@ class _AppContextBoardState extends State<AppContextBoard>
                   loggedInUser: _loggedInUser!,
                   initialTenant: _selectedTenant,
                   onTenantSelected: (tenant) {
-                    if (kDebugMode) {
-                      print('Tenant: ${tenant?.name}');
-                    }
+                    dev.log('Tenant: ${tenant?.name}');
                     if (tenant == null) {
                       return;
                     }
@@ -668,9 +644,7 @@ class _AppContextBoardState extends State<AppContextBoard>
   }
 
   Widget getAppConextBoard(PagPageRoute? pageRoute) {
-    if (kDebugMode) {
-      print('getAppContextBoard: ${_currentAppContext.name}');
-    }
+    dev.log('getAppContextBoard: ${_currentAppContext.name}');
 
     // routeGuard(context, _loggedInUser, appContext: _currentAppContext);
 
@@ -883,9 +857,7 @@ class _AppContextBoardState extends State<AppContextBoard>
         onTap: disabled
             ? null
             : () async {
-                if (kDebugMode) {
-                  print('AppContext: ${appContext.name}');
-                }
+                dev.log('AppContext: ${appContext.name}');
 
                 PagPageRoute? appHomeRoute = appContext.appHomePageRoute;
                 String routeStr = appHomeRoute?.route ?? appContext.route;
