@@ -1,7 +1,7 @@
 import 'package:buff_helper/pag_helper/def_helper/def_app.dart';
 import 'package:buff_helper/pag_helper/def_helper/def_role.dart';
+import 'package:buff_helper/pag_helper/def_helper/project_helper.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_config.dart';
-import 'package:buff_helper/pag_helper/pag_project_repo.dart';
 import 'dart:convert';
 import 'dart:developer' as dev;
 import 'package:flutter/foundation.dart';
@@ -16,14 +16,14 @@ const bool loadDashboard = true;
 
 // this is the list of active portal project scope
 // that the deployed portal will support
-const List<PagPortalProjectScope> activePortalPagProjectScopeList = [
-  PagPortalProjectScope.GI_DE,
-  // PagPortalProjectScope.PA_EMS,
-  PagPortalProjectScope.ZSP,
-  PagPortalProjectScope.MBFC,
-  PagPortalProjectScope.SUNSEAP,
-  PagPortalProjectScope.CW_P2,
-];
+// const List<PagPortalProjectScope> activePortalPagProjectScopeList = [
+//   PagPortalProjectScope.GI_DE,
+//   // PagPortalProjectScope.PA_EMS,
+//   PagPortalProjectScope.ZSP,
+//   PagPortalProjectScope.MBFC,
+//   PagPortalProjectScope.SUNSEAP,
+//   PagPortalProjectScope.CW_P2,
+// ];
 
 MdlPagAppConfig pagAppConfig = MdlPagAppConfig(
   portalType: PagPortalType.pagEmsTp,
@@ -56,19 +56,21 @@ Future<void> initializeAppConfig() async {
 
       // print('App Config Data: ${data['oreSvcTargetTier']} ${data['userSvcTargetTier']}');
 
-      String userSvcEnv = (data['userSvcTargetTier'] ?? '').isEmpty
-          ? DeploymentTeir.unset.name
-          : data['userSvcTargetTier'];
-      String oreSvcEnv = (data['oreSvcTargetTier'] ?? '').isEmpty
-          ? DeploymentTeir.unset.name
-          : data['oreSvcTargetTier'];
+      // String userSvcEnv = (data['userSvcTargetTier'] ?? '').isEmpty
+      //     ? DeploymentTeir.unset.name
+      //     : data['userSvcTargetTier'];
+      // String oreSvcEnv = (data['oreSvcTargetTier'] ?? '').isEmpty
+      //     ? DeploymentTeir.unset.name
+      //     : data['oreSvcTargetTier'];
 
       pagAppConfig = MdlPagAppConfig(
         portalType: PagPortalType.pagEmsTp,
         lazyLoadScope: '',
         loadDashboard: loadDashboard,
-        userSvcEnv: userSvcEnv,
-        oreSvcEnv: oreSvcEnv,
+        // userSvcEnv: userSvcEnv,
+        // oreSvcEnv: oreSvcEnv,
+        userSvcEnv: data['userSvcTargetTier'] ?? DeploymentTeir.unset.name,
+        oreSvcEnv: data['oreSvcTargetTier'] ?? DeploymentTeir.unset.name,
         activePortalPagProjectScopeList: activePortalPagProjectScopeList,
       );
       print('App Config: ${pagAppConfig.userSvcEnv} ${pagAppConfig.oreSvcEnv}');

@@ -1,6 +1,7 @@
 import 'package:buff_helper/pag_helper/comm/comm_app.dart';
 import 'package:buff_helper/pag_helper/def_helper/def_app.dart';
 import 'package:buff_helper/pag_helper/def_helper/def_page_route.dart';
+import 'package:buff_helper/pag_helper/def_helper/project_helper.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_data_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_theme_provider.dart';
@@ -89,9 +90,8 @@ void main() async {
     activePortalPagProjectScopeList[0],
   );
   if (portalScopeProfile == null) {
-    if (kDebugMode) {
-      print('Project profile not found');
-    }
+    dev.log('Project profile not found');
+
     throw Exception('Project profile not found');
   }
 
