@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:web/web.dart' as web;
 
-const String productName = 'Energy@Grid Tenant Portal';
+const String productName = 'Energy@Grid EMS Tenant Portal';
 const String productOrgName = 'Power Automation Pte Ltd';
 const String copyRightYear = '© 2023-2026';
 
