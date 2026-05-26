@@ -63,7 +63,7 @@ packages:
       path: "../pkg_pabuff_helper"
       relative: true
     source: path
-    version: "2.23.10"
+    version: "2.24.0"
   calendar_date_picker2:
     dependency: transitive
     description:
