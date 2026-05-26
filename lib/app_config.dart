@@ -10,7 +10,7 @@ import 'package:web/web.dart' as web;
 
 const String productName = 'Energy@Grid Tenant Portal';
 const String productOrgName = 'Power Automation Pte Ltd';
-const String copyRightYear = '© 2023-2025';
+const String copyRightYear = '© 2023-2026';
 
 const bool loadDashboard = true;
 
