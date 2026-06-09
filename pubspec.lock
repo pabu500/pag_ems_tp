@@ -63,7 +63,7 @@ packages:
       path: "../pkg_pabuff_helper"
       relative: true
     source: path
-    version: "2.24.0"
+    version: "2.24.5"
   calendar_date_picker2:
     dependency: transitive
     description:
@@ -345,7 +345,7 @@ packages:
     source: hosted
     version: "11.0.0"
   get:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: get
       sha256: "5ed34a7925b85336e15d472cc4cfe7d9ebf4ab8e8b9f688585bf6b50f4c3d79a"
@@ -756,10 +756,10 @@ packages:
     dependency: "direct main"
     description:
       name: provider
-      sha256: c8a055ee5ce3fd98d6fc872478b03823ffdb448699c6ebdbbc71d59b596fd48c
+      sha256: "4e82183fa20e5ca25703ead7e05de9e4cceed1fbd1eadc1ac3cb6f565a09f272"
       url: "https://pub.dev"
     source: hosted
-    version: "6.1.2"
+    version: "6.1.5+1"
   qr:
     dependency: transitive
     description:

@@ -6,6 +6,7 @@ import 'package:buff_helper/pag_helper/model/mdl_pag_user.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/wgt/ls/wgt_pag_ls.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_config.dart';
@@ -30,9 +31,9 @@ class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
   late final MdlPagUser? loggedInUser;
 
   TabController? _tabController;
-  late final List<Widget> _tabViewChildren;
+  final List<Widget> _tabViewChildren = [];
 
-  bool _showBillLs = false;
+  late final bool showBillLs;
 
   @override
   void initState() {
@@ -44,39 +45,75 @@ class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
         Provider.of<PagUserProvider>(context, listen: false).currentUser;
 
     if (widget.selectedTenant != null) {
-      _showBillLs = true;
+      showBillLs = true;
+    } else {
+      showBillLs = false;
     }
 
-    _tabViewChildren = [
-      if (_showBillLs)
-        WgtPagLs(
-          appConfig: pagAppConfig,
-          pagAppContext: widget.pagAppContext,
-          itemKind: PagItemKind.bill,
-          listContextType: PagListContextType.infoTp,
-          initialFilterMap: {
-            'tenant_id': widget.selectedTenant?.id,
-            'tenant_name': widget.selectedTenant?.name,
-            'tenant_label': widget.selectedTenant?.label,
-            'tenant_account_number': widget.selectedTenant?.accountNumber,
-            // 'lc_status': 'Rl',
-          },
-        ),
-      WgtEbBillTenant(
-        // tenantIdStr: '123',
-        // tenenatName: 'tenant-1', //'admin'
-        // tenantLabel: 'Tenant 1',
-        // tenantAccountNumber: 'A5310014',
-        tenant: widget.selectedTenant,
-      ),
-    ];
+    // _tabViewChildren.addAll([
+    //   // WgtPagLs(
+    //   //   appConfig: pagAppConfig,
+    //   //   pagAppContext: widget.pagAppContext,
+    //   //   itemKind: PagItemKind.bill,
+    //   //   isCompactFinder: context.isPhone,
+    //   //   listContextType: PagListContextType.infoTp,
+    //   //   initialFilterMap: {
+    //   //     'tenant_id': widget.selectedTenant?.id,
+    //   //     'tenant_name': widget.selectedTenant?.name,
+    //   //     'tenant_label': widget.selectedTenant?.label,
+    //   //     'tenant_account_number': widget.selectedTenant?.accountNumber,
+    //   //     // 'lc_status': 'Rl',
+    //   //   },
+    //   // ),
+    //   SizedBox(
+    //     height: 400,
+    //     child: Center(
+    //       child: Text(
+    //         'Bill List/Search Coming Soon',
+    //         style: Theme.of(context).textTheme.headlineSmall,
+    //       ),
+    //     ),
+    //   ),
+    //   WgtEbBillTenant(tenant: widget.selectedTenant),
+    // ]);
 
-    _tabController =
-        TabController(length: _tabViewChildren.length, vsync: this);
+    // _tabController =
+    //     TabController(length: _tabViewChildren.length, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
+    _tabViewChildren.addAll([
+      showBillLs
+          ? WgtPagLs(
+              appConfig: pagAppConfig,
+              pagAppContext: widget.pagAppContext,
+              itemKind: PagItemKind.bill,
+              isCompactFinder: context.isPhone,
+              listContextType: PagListContextType.infoTp,
+              initialFilterMap: {
+                'tenant_id': widget.selectedTenant?.id,
+                'tenant_name': widget.selectedTenant?.name,
+                'tenant_label': widget.selectedTenant?.label,
+                'tenant_account_number': widget.selectedTenant?.accountNumber,
+                // 'lc_status': 'Rl',
+              },
+            )
+          : SizedBox(
+              height: 400,
+              child: Center(
+                child: Text(
+                  'Select tenant to view bill list/search',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+            ),
+      WgtEbBillTenant(tenant: widget.selectedTenant),
+    ]);
+
+    _tabController =
+        TabController(length: _tabViewChildren.length, vsync: this);
+
     double screenWidth = MediaQuery.of(context).size.width;
     TextStyle? tabLabelStyle =
         screenWidth > 400 ? null : const TextStyle(fontSize: 12);
@@ -90,8 +127,7 @@ class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
             unselectedLabelColor: Theme.of(context).hintColor,
             dividerColor: Theme.of(context).colorScheme.surface,
             tabs: [
-              if (_showBillLs)
-                Tab(child: Text('List/Search Bill', style: tabLabelStyle)),
+              Tab(child: Text('List/Search Bill', style: tabLabelStyle)),
               Tab(child: Text('EB Bill', style: tabLabelStyle)),
             ],
             onTap: (index) {},

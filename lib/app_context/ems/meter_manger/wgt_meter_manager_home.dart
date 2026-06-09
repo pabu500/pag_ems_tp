@@ -12,6 +12,7 @@ import 'package:buff_helper/xt_ui/wdgt/info/get_error_text_prompt.dart';
 import 'package:buff_helper/xt_ui/wdgt/wgt_pag_wait.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_config.dart';
@@ -171,6 +172,7 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
                                     child: WgtPagLs(
                                       appConfig: pagAppConfig,
                                       pagAppContext: widget.pagAppContext,
+                                      isCompactFinder: context.isPhone,
                                       itemKind: PagItemKind.device,
                                       listContextType: PagListContextType.info,
                                       selectedItemInfoList:

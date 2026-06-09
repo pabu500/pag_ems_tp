@@ -15,6 +15,7 @@ import 'package:buff_helper/pag_helper/page/pg_tech_issue.dart';
 import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/vendor_helper.dart';
 import 'package:buff_helper/pag_helper/wgt/app_context_menu.dart';
+import 'package:buff_helper/pag_helper/wgt/page_helper.dart';
 import 'package:buff_helper/pag_helper/wgt/scope/wgt_scope_selector3.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_splash.dart';
 import 'package:buff_helper/pag_helper/wgt/user/post_login.dart';
@@ -25,6 +26,7 @@ import 'package:buff_helper/pkg_buff_helper.dart';
 import 'package:buff_helper/xt_ui/wdgt/wgt_pag_wait.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/context_extensions.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:pag_ems_tp/app_context/ems/wgt_app_context_ems.dart';
@@ -35,7 +37,11 @@ import 'package:provider/provider.dart';
 import '../app_config.dart';
 
 class AppContextBoard extends StatefulWidget {
-  const AppContextBoard({super.key, required this.pageRoute, this.icon});
+  const AppContextBoard({
+    super.key,
+    required this.pageRoute,
+    this.icon,
+  });
 
   final PagPageRoute pageRoute;
   final Widget? icon;
@@ -88,6 +94,8 @@ class _AppContextBoardState extends State<AppContextBoard>
       Provider.of<PagThemeProvider>(context, listen: false).isDark;
 
   double _boardWidth = 0;
+
+  bool _isPhone = false;
 
   Future<void> loadAppSetting() async {
     _userError = false;
@@ -233,6 +241,8 @@ class _AppContextBoardState extends State<AppContextBoard>
   Widget build(BuildContext context) {
     dev.log('AppContextBoard.build()');
 
+    _isPhone = context.isPhone;
+
     bool isLoggedIn = false;
     if (_loggedInUser != null) {
       if (!_loggedInUser!.isEmpty) {
@@ -325,6 +335,8 @@ class _AppContextBoardState extends State<AppContextBoard>
     String appVer = Provider.of<PagAppProvider>(context).appVer ?? '';
     final bottomText = '$productName $appVer $copyRightYear $productOrgName';
 
+    _scopeSelectorKey ??= UniqueKey();
+
     return (_loggedInUser!.resetPasswordToken == 'flag_reset')
         ? Material(
             child: Column(
@@ -375,30 +387,62 @@ class _AppContextBoardState extends State<AppContextBoard>
             // key: _scaffold,
             appBar: AppBar(
               centerTitle: true,
-              toolbarHeight: 70,
-              title: buildTitleWidget(),
-              leading: Builder(
-                builder: (BuildContext context) {
-                  return InkWell(
-                    onTap: true
-                        // _loadingPagAppContext
-                        ? null
-                        : () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                    child: WgtPaG(
-                      conextLabel: pageTitle, //_currentAppContext.label,
-                      size: 35,
-                      colorA:
-                          getColor(context: context, pagWgt: PagWgt.pagCube),
-                      colorC: _currentAppContext.appContextType ==
-                              PagAppContextType.consoleHome
-                          ? null
-                          : pag3,
+              toolbarHeight: 135,
+              title: _isPhone ? Container() : getTitleWidget(),
+              leading: _isPhone
+                  ? getTitleWidgetNarrow(_loggedInUser!, _currentAppContext,
+                      _isPhone, _scopeSelectorKey!, (
+                      projectProfile,
+                      siteGroupProfile,
+                      siteProfile,
+                      buildingProfile,
+                      locatonGroupProfile,
+                    ) async {
+                      setState(() {
+                        _loggedInUser!.selectedScope = MdlPagScopeProfile(
+                          projectProfile: projectProfile,
+                          siteGroupProfile: siteGroupProfile,
+                          siteProfile: siteProfile,
+                          buildingProfile: buildingProfile,
+                          locationGroupProfile: locatonGroupProfile,
+                        );
+                        _activeScopeStr =
+                            _loggedInUser!.selectedScope.getEffectScopeStr();
+                        if (kDebugMode) {
+                          print('Active Scope: $_activeScopeStr');
+                        }
+
+                        _selectedTenant = null;
+                        _loggedInUser!.updateSelectedTenant(_selectedTenant);
+
+                        _projectLogoKey = UniqueKey();
+                        _scopeSelectorKey = UniqueKey();
+                        _contextRefreshKey = UniqueKey();
+                        _tenantRefreshKey = UniqueKey();
+                      });
+                    })
+                  : Builder(
+                      builder: (BuildContext context) {
+                        return InkWell(
+                          onTap: true
+                              // _loadingPagAppContext
+                              ? null
+                              : () {
+                                  Scaffold.of(context).openDrawer();
+                                },
+                          child: WgtPaG(
+                            conextLabel: pageTitle, //_currentAppContext.label,
+                            size: 35,
+                            colorA: getColor(
+                                context: context, pagWgt: PagWgt.pagCube),
+                            colorC: _currentAppContext.appContextType ==
+                                    PagAppContextType.consoleHome
+                                ? null
+                                : pag3,
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
               leadingWidth: 230,
               actions: [
                 UserMenu(
@@ -420,8 +464,12 @@ class _AppContextBoardState extends State<AppContextBoard>
               ],
               bottom: PreferredSize(
                 preferredSize: Size.fromHeight(ribbonHeight),
-                child: Column(
-                    children: [getAppContextRibbon(), getNoticeRibbon()]),
+                child: Column(children: [
+                  getTenantSelector(),
+                  verticalSpaceTiny,
+                  getAppContextRibbon(),
+                  getNoticeRibbon()
+                ]),
               ),
             ),
             drawer: WgtAppContextDrawer(
@@ -458,32 +506,35 @@ class _AppContextBoardState extends State<AppContextBoard>
                           ],
                         ),
                       ),
-                      if (_contextMenuIsStack)
-                        WgtAppContextMenu(
-                          loggedInUser: _loggedInUser!,
-                          width: sliderWidth,
-                          appContext: _currentAppContext,
-                          title: _currentAppContext.label,
-                          // routeList: _currentAppContext.menuRouteList!,
-                          // routeList2: _currentAppContext.routeList,
-                        ),
+                      if (_contextMenuIsStack && !_isPhone) getAppCtxMenu(),
                     ],
                   )),
                 ),
               ),
             ),
-            bottomNavigationBar: SizedBox(
-              height: 13,
-              child: Tooltip(
-                waitDuration: const Duration(milliseconds: 500),
-                message: pagAppConfig.oreSvcEnv,
-                child: Text(
-                  bottomText,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 12, color: Theme.of(context).hintColor),
+            bottomNavigationBar: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (_isPhone)
+                  SizedBox(
+                    height: 70,
+                    width: MediaQuery.of(context).size.width,
+                    child: getAppCtxMenu(),
+                  ),
+                SizedBox(
+                  height: 13,
+                  child: Tooltip(
+                    waitDuration: const Duration(milliseconds: 500),
+                    message: pagAppConfig.oreSvcEnv,
+                    child: Text(
+                      bottomText,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontSize: 12, color: Theme.of(context).hintColor),
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             floatingActionButton: FloatingActionButton(
               mini: true,
@@ -584,7 +635,7 @@ class _AppContextBoardState extends State<AppContextBoard>
           );
   }
 
-  Widget buildTitleWidget() {
+  Widget getTitleWidget() {
     if (_loggedInUser == null || _loggedInUser!.isEmpty) {
       return const SizedBox();
     }
@@ -599,47 +650,62 @@ class _AppContextBoardState extends State<AppContextBoard>
         children: [
           widget.icon ?? const SizedBox(),
           getScopeSelector(),
-          horizontalSpaceRegular,
-          Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).hintColor.withAlpha(80),
-              ),
-              borderRadius: BorderRadius.circular(5),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-            child: Row(
-              children: [
-                Text(
-                  'Tenant: ',
-                  style: TextStyle(
-                    color: Theme.of(context).hintColor,
-                    fontSize: 15,
-                  ),
-                ),
-                WgtUserTenantSelector(
-                  key: _tenantRefreshKey,
-                  appConfig: pagAppConfig,
-                  loggedInUser: _loggedInUser!,
-                  initialTenant: _selectedTenant,
-                  onTenantSelected: (tenant) {
-                    dev.log('Tenant: ${tenant?.name}');
-                    if (tenant == null) {
-                      return;
-                    }
+          // horizontalSpaceRegular,
+          // getTenantSelector(),
+        ],
+      ),
+    );
+  }
 
-                    setState(() {
-                      _selectedTenant = tenant;
-                      _loggedInUser!.updateSelectedTenant(_selectedTenant);
-                      _contextRefreshKey = UniqueKey();
-                    });
-                  },
-                ),
-              ],
+  Widget getTenantSelector() {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).hintColor.withAlpha(80),
+        ),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (!_isPhone)
+            Text(
+              'Tenant: ',
+              style: TextStyle(
+                color: Theme.of(context).hintColor,
+                fontSize: 15,
+              ),
             ),
+          WgtUserTenantSelector(
+            key: _tenantRefreshKey,
+            appConfig: pagAppConfig,
+            loggedInUser: _loggedInUser!,
+            initialTenant: _selectedTenant,
+            onTenantSelected: (tenant) {
+              dev.log('Tenant: ${tenant?.name}');
+              if (tenant == null) {
+                return;
+              }
+
+              setState(() {
+                _selectedTenant = tenant;
+                _loggedInUser!.updateSelectedTenant(_selectedTenant);
+                _contextRefreshKey = UniqueKey();
+              });
+            },
           ),
         ],
       ),
+    );
+  }
+
+  Widget getAppCtxMenu() {
+    return WgtAppContextMenu(
+      loggedInUser: _loggedInUser!,
+      width: sliderWidth,
+      appContext: _currentAppContext,
+      title: _currentAppContext.label,
     );
   }
 
