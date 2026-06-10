@@ -103,8 +103,12 @@ class _WgtBillingManagerHomeState extends State<WgtBillingManagerHome>
               height: 400,
               child: Center(
                 child: Text(
-                  'Select tenant to view bill list/search',
-                  style: Theme.of(context).textTheme.headlineSmall,
+                  'Select tenant to view bills',
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Theme.of(context).hintColor.withAlpha(130),
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),
