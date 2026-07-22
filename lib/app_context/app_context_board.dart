@@ -259,10 +259,12 @@ class _AppContextBoardState extends State<AppContextBoard>
 
     dev.log('app_home: loggedIn: $isLoggedIn, scopeReady: $scopeReady');
 
-    _boardWidth = MediaQuery.of(context).size.width -
-        ((!_showLeftSideSlider || _leftSliderIsStack)
-            ? 30 + 5
-            : sliderWidth + 5);
+    _boardWidth = _isPhone
+        ? MediaQuery.of(context).size.width
+        : MediaQuery.of(context).size.width -
+            ((!_showLeftSideSlider || _leftSliderIsStack)
+                ? 30 + 5
+                : sliderWidth + 5);
 
     return !isLoggedIn
         ? FutureBuilder<void>(
@@ -408,9 +410,8 @@ class _AppContextBoardState extends State<AppContextBoard>
                         );
                         _activeScopeStr =
                             _loggedInUser!.selectedScope.getEffectScopeStr();
-                        if (kDebugMode) {
-                          print('Active Scope: $_activeScopeStr');
-                        }
+
+                        dev.log('Active Scope: $_activeScopeStr');
 
                         _selectedTenant = null;
                         _loggedInUser!.updateSelectedTenant(_selectedTenant);
@@ -495,7 +496,7 @@ class _AppContextBoardState extends State<AppContextBoard>
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            horizontalSpaceTiny,
+                            // horizontalSpaceTiny,
                             Container(
                               // full screen width
                               // width: _boardWidth,
