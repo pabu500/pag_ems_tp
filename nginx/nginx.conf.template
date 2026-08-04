@@ -3,6 +3,37 @@ server {
     listen [::]:8868;
     server_name localhost;
 
+    # Prevent caching of Flutter entry files
+    location = /index.html {
+        expires off;
+        etag off;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
+    location = /main.dart.js {
+        expires off;
+        etag off;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
+    location = /flutter_bootstrap.js {
+        expires off;
+        etag off;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
+    location = /flutter_service_worker.js {
+        expires off;
+        etag off;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate";
+        add_header Pragma "no-cache";
+        add_header Expires "0";
+    }
+    ## Prevent caching of Flutter entry files
+
     location / {
         root /usr/share/nginx/html;
         index index.html index.htm;
