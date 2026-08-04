@@ -3,6 +3,8 @@ server {
     listen [::]:8868;
     server_name localhost;
 
+    root /usr/share/nginx/html;
+
     # Prevent caching of Flutter entry files
     location = /index.html {
         expires off;
