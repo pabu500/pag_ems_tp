@@ -73,9 +73,9 @@ Future<void> initializeAppConfig() async {
         oreSvcEnv: data['oreSvcTargetTier'] ?? DeploymentTeir.unset.name,
         activePortalPagProjectScopeList: activePortalPagProjectScopeList,
       );
-      print('App Config: ${pagAppConfig.userSvcEnv} ${pagAppConfig.oreSvcEnv}');
+      // print('App Config: ${pagAppConfig.userSvcEnv} ${pagAppConfig.oreSvcEnv}');
     } else {
-      print('response.body: ${response.body}');
+      // print('response.body: ${response.body}');
       throw Exception('Failed to load config');
     }
   }
