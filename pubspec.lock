@@ -60,7 +60,7 @@ packages:
   buff_helper:
     dependency: "direct main"
     description:
-      path: "../pkg_pabuff_helper"
+      path: "../../_pkg_pabuff_helper/pkg_pabuff_helper"
       relative: true
     source: path
     version: "2.24.10"
