@@ -34,6 +34,7 @@ import 'package:buff_helper/pag_helper/wgt/app/app_context_drawer.dart';
 import 'package:pag_ems_tp/pg_project_public_front.dart';
 import 'package:buff_helper/pag_helper/wgt/user/user_menu.dart';
 import 'package:provider/provider.dart';
+import 'package:web/web.dart' as web;
 import '../app_config.dart';
 
 class AppContextBoard extends StatefulWidget {
@@ -52,6 +53,11 @@ class AppContextBoard extends StatefulWidget {
 
 class _AppContextBoardState extends State<AppContextBoard>
     with TickerProviderStateMixin {
+  static const _tenantUserManualAssetPath =
+      'assets/assets/documents/basic_user_manual_tenants_2_01.pdf';
+  static const _tenantUserManualFileName =
+      'Basic User Manual 2.01 [Tenants]_2026.07.27.pdf';
+
   bool _initialised = false;
 
   late MdlPagUser? _loggedInUser;
@@ -667,38 +673,62 @@ class _AppContextBoardState extends State<AppContextBoard>
         borderRadius: BorderRadius.circular(5),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Stack(
+        alignment: Alignment.center,
         children: [
-          if (!_isPhone)
-            Text(
-              'Tenant: ',
-              style: TextStyle(
-                color: Theme.of(context).hintColor,
-                fontSize: 15,
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (!_isPhone)
+                Text(
+                  'Tenant: ',
+                  style: TextStyle(
+                    color: Theme.of(context).hintColor,
+                    fontSize: 15,
+                  ),
+                ),
+              WgtUserTenantSelector(
+                key: _tenantRefreshKey,
+                appConfig: pagAppConfig,
+                loggedInUser: _loggedInUser!,
+                initialTenant: _selectedTenant,
+                onTenantSelected: (tenant) {
+                  dev.log('Tenant: ${tenant?.name}');
+                  if (tenant == null) {
+                    return;
+                  }
+
+                  setState(() {
+                    _selectedTenant = tenant;
+                    _loggedInUser!.updateSelectedTenant(_selectedTenant);
+                    _contextRefreshKey = UniqueKey();
+                  });
+                },
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Tooltip(
+              message: 'Download tenant user manual (PDF)',
+              child: IconButton(
+                onPressed: _downloadTenantUserManual,
+                icon: Icon(Symbols.book_6),
+                color: Theme.of(context).colorScheme.primary,
+                iconSize: 35,
               ),
             ),
-          WgtUserTenantSelector(
-            key: _tenantRefreshKey,
-            appConfig: pagAppConfig,
-            loggedInUser: _loggedInUser!,
-            initialTenant: _selectedTenant,
-            onTenantSelected: (tenant) {
-              dev.log('Tenant: ${tenant?.name}');
-              if (tenant == null) {
-                return;
-              }
-
-              setState(() {
-                _selectedTenant = tenant;
-                _loggedInUser!.updateSelectedTenant(_selectedTenant);
-                _contextRefreshKey = UniqueKey();
-              });
-            },
           ),
         ],
       ),
     );
+  }
+
+  void _downloadTenantUserManual() {
+    web.HTMLAnchorElement()
+      ..href = _tenantUserManualAssetPath
+      ..download = _tenantUserManualFileName
+      ..click();
   }
 
   Widget getAppCtxMenu() {
