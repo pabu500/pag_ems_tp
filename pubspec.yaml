@@ -25,6 +25,7 @@ dependencies:
     # path: ../../_pkg_pabuff_helper/pkg_pabuff_helper
     git:
       url: https://github.com/pabu500/pkg_pabuff_helper.git
+      ref: bill_gen3
 
 dev_dependencies:
   flutter_test:

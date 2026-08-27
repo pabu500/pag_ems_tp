@@ -14,6 +14,10 @@ const String copyRightYear = '© 2023-2026';
 
 const bool loadDashboard = true;
 
+// Build with --dart-define=billingGen=3 to enable the refactored billing flow.
+// The current billing flow remains the default.
+const int billingGen = int.fromEnvironment('billingGen', defaultValue: 2);
+
 // this is the list of active portal project scope
 // that the deployed portal will support
 // const List<PagPortalProjectScope> activePortalPagProjectScopeList = [
@@ -35,6 +39,9 @@ MdlPagAppConfig pagAppConfig = MdlPagAppConfig(
 );
 
 Future<void> initializeAppConfig() async {
+  if (billingGen != 2 && billingGen != 3) {
+    throw StateError('billingGen must be 2 or 3');
+  }
   dev.log('Initializing App Config for ${pagAppConfig.portalType}');
   if (kDebugMode) {
     pagAppConfig = MdlPagAppConfig(
