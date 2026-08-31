@@ -9,18 +9,21 @@
             "request": "launch",
             "type": "dart",
             "args": ["--web-port", "8866"],
+            "toolArgs": ["--dart-define=billingGen=3"]
         },
         {
             "name": "ems_tp (profile mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "profile"
+            "flutterMode": "profile",
+            "toolArgs": ["--dart-define=billingGen=3"]
         },
         {
             "name": "ems_tp (release mode)",
             "request": "launch",
             "type": "dart",
-            "flutterMode": "release"
+            "flutterMode": "release",
+            "toolArgs": ["--dart-define=billingGen=3"]
         }
     ]
 }

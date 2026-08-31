@@ -41,7 +41,7 @@ RUN rm -f pubspec.lock
 RUN rm -rf /root/.pub-cache
 
 RUN flutter pub get
-RUN flutter build web --no-tree-shake-icons
+RUN flutter build web --no-tree-shake-icons --dart-define=billingGen=3
 
 # Stage 2 - Create the run-time image
 #FROM nginx:stable-alpine AS runner
