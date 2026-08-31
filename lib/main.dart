@@ -13,6 +13,8 @@ import 'package:buff_helper/pag_helper/theme/theme_setting.dart';
 import 'package:buff_helper/pag_helper/wgt/pg_portal_maint.dart';
 import 'package:buff_helper/pag_helper/wgt/user/pg_my_profile.dart';
 import 'package:buff_helper/pagrid_helper/comm_helper/local_storage.dart';
+import 'package:buff_helper/pagrid_helper/user_helper/pg_forgot_password.dart';
+import 'package:buff_helper/pagrid_helper/user_helper/pg_reset_password.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -302,6 +304,22 @@ final GoRouter _router = GoRouter(
         return const AppContextBoard(pageRoute: PagPageRoute.billingManager);
       },
     ),
+    GoRoute(
+        path: getRoute(PagPageRoute.forgotPassword),
+        builder: (BuildContext context, GoRouterState state) {
+          return PgForgotPassword(appConfig: pagAppConfig);
+        }),
+    GoRoute(
+        path: getRoute(PagPageRoute.resetPassword),
+        builder: (BuildContext context, GoRouterState state) {
+          // return ForgotPassword();
+          return PgResetPassword(
+            appConfig: pagAppConfig,
+            token: state.uri.queryParameters['token'],
+            loggedInUser: Provider.of<PagUserProvider>(context, listen: false)
+                .currentUser,
+          );
+        }),
   ],
   //   ),
   // ],

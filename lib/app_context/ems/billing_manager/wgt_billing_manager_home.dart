@@ -1,12 +1,7 @@
-import 'package:buff_helper/pag_helper/def_helper/dh_list.dart';
-import 'package:buff_helper/pag_helper/def_helper/dh_pag_item.dart';
 import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
-import 'package:buff_helper/pag_helper/wgt/ls/wgt_pag_ls.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_utils/src/extensions/context_extensions.dart';
 
-import '../../../app_config.dart';
 import 'wgt_eb_bill.dart';
 import 'wgt_tenant_bill_list.dart';
 
