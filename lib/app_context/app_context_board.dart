@@ -54,9 +54,9 @@ class AppContextBoard extends StatefulWidget {
 class _AppContextBoardState extends State<AppContextBoard>
     with TickerProviderStateMixin {
   static const _tenantUserManualAssetPath =
-      'assets/assets/documents/basic_user_manual_tenants_2_01.pdf';
+      'assets/assets/documents/user_manual_tenants_v2.2_2026.09.01.pdf';
   static const _tenantUserManualFileName =
-      'Basic User Manual 2.01 [Tenants]_2026.07.27.pdf';
+      'User Manual Tenants v2.2_2026.09.01.pdf';
 
   bool _initialised = false;
 
