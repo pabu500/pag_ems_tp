@@ -3,6 +3,7 @@ import 'dart:developer' as dev;
 import 'package:buff_helper/pag_helper/comm/comm_tenant.dart';
 import 'package:buff_helper/pag_helper/def_helper/dh_scope.dart';
 import 'package:buff_helper/pag_helper/def_helper/dh_list.dart';
+import 'package:buff_helper/pag_helper/def_helper/dh_page_route.dart';
 import 'package:buff_helper/pag_helper/def_helper/dh_pag_item.dart';
 import 'package:buff_helper/pag_helper/model/acl/mdl_pag_svc_claim.dart';
 import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
@@ -169,6 +170,9 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
                                     padding: const EdgeInsets.only(top: 5.0),
                                     child: WgtPagLs(
                                       appConfig: pagAppConfig,
+                                      loggedInUser: loggedInUser,
+                                      pageRoute: PagPageRoute.meterManager,
+                                      pageSection: PageSection.meterList,
                                       pagAppContext: widget.pagAppContext,
                                       isCompactFinder: context.isPhone,
                                       itemKind: PagItemKind.device,
@@ -182,6 +186,9 @@ class _WgtMeterManagerHomeState extends State<WgtMeterManagerHome>
                                     padding: const EdgeInsets.only(top: 5.0),
                                     child: WgtPagLs(
                                       appConfig: pagAppConfig,
+                                      loggedInUser: loggedInUser,
+                                      pageRoute: PagPageRoute.meterManager,
+                                      pageSection: PageSection.meterUsage,
                                       pagAppContext: widget.pagAppContext,
                                       itemKind: PagItemKind.device,
                                       listContextType: PagListContextType.usage,

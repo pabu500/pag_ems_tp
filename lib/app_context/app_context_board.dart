@@ -3,7 +3,7 @@ import 'dart:developer' as dev;
 import 'package:buff_helper/pag_helper/def_helper/dh_pag_acl.dart';
 import 'package:buff_helper/pag_helper/pag_app_context_list.dart';
 import 'package:buff_helper/pag_helper/comm/comm_user_service.dart';
-import 'package:buff_helper/pag_helper/def_helper/def_page_route.dart';
+import 'package:buff_helper/pag_helper/def_helper/dh_page_route.dart';
 import 'package:buff_helper/pag_helper/model/acl/mdl_pag_role.dart';
 import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
@@ -733,6 +733,7 @@ class _AppContextBoardState extends State<AppContextBoard>
 
   Widget getAppCtxMenu() {
     return WgtAppContextMenu(
+      appConfig: pagAppConfig,
       loggedInUser: _loggedInUser!,
       width: sliderWidth,
       appContext: _currentAppContext,

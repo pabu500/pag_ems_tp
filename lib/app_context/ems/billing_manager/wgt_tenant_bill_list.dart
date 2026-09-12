@@ -1,9 +1,12 @@
 import 'package:buff_helper/pag_helper/def_helper/dh_list.dart';
+import 'package:buff_helper/pag_helper/def_helper/dh_page_route.dart';
 import 'package:buff_helper/pag_helper/def_helper/dh_pag_item.dart';
 import 'package:buff_helper/pag_helper/model/ems/mdl_pag_tenant.dart';
 import 'package:buff_helper/pag_helper/model/mdl_pag_app_context.dart';
+import 'package:buff_helper/pag_helper/model/provider/pag_user_provider.dart';
 import 'package:buff_helper/pag_helper/wgt/ls/wgt_pag_ls.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../app_config.dart';
 
@@ -37,6 +40,9 @@ class WgtTenantBillList extends StatelessWidget {
 
     return WgtPagLs(
       appConfig: pagAppConfig,
+      loggedInUser: context.watch<PagUserProvider>().currentUser,
+      pageRoute: PagPageRoute.billingManager,
+      pageSection: PageSection.billList,
       pagAppContext: pagAppContext,
       itemKind: PagItemKind.bill,
       listContextType: PagListContextType.infoTp,

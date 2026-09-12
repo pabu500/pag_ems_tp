@@ -1,6 +1,6 @@
 import 'package:buff_helper/pag_helper/comm/comm_app.dart';
 import 'package:buff_helper/pag_helper/def_helper/def_app.dart';
-import 'package:buff_helper/pag_helper/def_helper/def_page_route.dart';
+import 'package:buff_helper/pag_helper/def_helper/dh_page_route.dart';
 import 'package:buff_helper/pag_helper/def_helper/project_helper.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_app_provider.dart';
 import 'package:buff_helper/pag_helper/model/provider/pag_data_provider.dart';
