@@ -68,11 +68,9 @@ packages:
   buff_helper:
     dependency: "direct main"
     description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "4c0065a898442917a0ed7c5ff9c240fd18f7fce7"
-      url: "https://github.com/pabu500/pkg_pabuff_helper.git"
-    source: git
+      path: "../_pkg_pabuff_helper"
+      relative: true
+    source: path
     version: "2.24.11"
   calendar_date_picker2:
     dependency: transitive
